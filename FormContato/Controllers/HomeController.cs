@@ -1,7 +1,9 @@
 using FormContato.Context;
 using FormContato.DTOs;
 using FormContato.Models;
+using FormContato.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 
 namespace FormContato.Controllers;
@@ -34,10 +36,22 @@ public class HomeController : Controller
         model.Email = contato.Email;
         model.Mensagem = contato.Mensagem;
 
-        _context.Add(model);
-        await _context.SaveChangesAsync();
+        string queueName = "form_contact";
 
-        return View("Success");
+        try
+        {
+            var producer = new Producer();
+            producer.Produce(queueName, contato);
+            _context.Add(model);
+            await _context.SaveChangesAsync();
+            return View("Success");
+        }
+        catch (Exception ex)
+        {
+            return BadRequest("Erro ao salvar a mensagem.");
+        }
+
+
     }
 
 
