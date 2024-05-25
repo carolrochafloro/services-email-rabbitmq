@@ -3,6 +3,18 @@
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <h1 class="display-4">Envie uma mensagem</h1>
+    <form action="/" method="post">
+        <p>
+            <input type="text" name="name" id="name" placeholder="Nome"/>
+        </p>
+        <p>
+            <input type="email" name="email" id="email" placeholder="E-mail" />
+        </p>
+        <p>
+            <textarea name="mensgem" rows="5" cols="40" placeholder="Digite sua mensagem."></textarea>
+        </p>
+        <input type="submit" name="enviar" id="enviar" value="Enviar" />
+
+    </form>
 </div>
