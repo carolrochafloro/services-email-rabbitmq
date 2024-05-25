@@ -1,2 +1,2 @@
-# microservices-pedidos-rabbitmq
-Projeto de microservices para receber pedidos via API e enviar notificações através do RabbitMQ, utilizando SQLServer e TDD.
+# Microservices - envio de e-mail
+Projeto de microservices para receber contatos via API e enviar via e-mail através do RabbitMQ, utilizando SQLServer e TDD.
