@@ -17,7 +17,7 @@ public class Producer : IDisposable
     // conexão com o servidor no construtor
     public Producer()
     {
-        factory = new ConnectionFactory { HostName = hostName };
+        factory = new ConnectionFactory { HostName = "localhost" };
         connection = factory.CreateConnection();
         channel = connection.CreateModel();
     }
@@ -46,7 +46,5 @@ public class Producer : IDisposable
         channel.Close();
         connection.Close();
     }
-
-
 
 }

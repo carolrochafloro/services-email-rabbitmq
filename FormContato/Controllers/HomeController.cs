@@ -27,7 +27,7 @@ public class HomeController : Controller
     {
         if (contato is null)
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return View("Error");
         }
 
         ContactViewModel model = new ContactViewModel();
@@ -48,7 +48,7 @@ public class HomeController : Controller
         }
         catch (Exception ex)
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return View("Error");
         }
 
     }
