@@ -1,4 +1,6 @@
 namespace Email;
+using dotenv.net;
+using Email.Services;
 
 public class Worker : BackgroundService
 {
@@ -11,13 +13,20 @@ public class Worker : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        string queueName = "form_contact";
         while (!stoppingToken.IsCancellationRequested)
         {
-            //if (_logger.IsEnabled(LogLevel.Information))
-            //{
-            //    _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
-            //}
-            //await Task.Delay(1000, stoppingToken);
+            var consumer = new Consumer();
+            consumer.Consume(queueName);
+
+            if (_logger.IsEnabled(LogLevel.Information))
+            {
+                _logger.LogInformation(consumer.message);
+            }
+            await Task.Delay(10000, stoppingToken);
         }
     }
+
+    // criar task para monitorar DB por mensagens não enviadas
+    // e tentar novamente, atualizar o db
 }
