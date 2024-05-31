@@ -14,4 +14,6 @@ public class ContactViewModel
 
     [Required]
     public string? Mensagem { get; set; }
+
+    public bool IsSent { get; set; } = false; 
 }
