@@ -9,21 +9,25 @@ public class Worker : BackgroundService
     public Worker(ILogger<Worker> logger)
     {
         _logger = logger;
+        DotEnv.Load();
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        string queueName = "form_contact";
+        var consumer = new Consumer();
+
+        await Task.Run(() => consumer.Consume(Environment.GetEnvironmentVariable("QUEUE_NAME")));
+        await Task.Run(() => consumer.ProcessMessages());
+
         while (!stoppingToken.IsCancellationRequested)
         {
-            var consumer = new Consumer();
-            consumer.Consume(queueName);
 
             if (_logger.IsEnabled(LogLevel.Information))
             {
-                _logger.LogInformation(consumer.message);
+                _logger.LogInformation("Consuming messages.");
             }
-            await Task.Delay(10000, stoppingToken);
+          
+            await Task.Delay(1000, stoppingToken);
         }
     }
 
