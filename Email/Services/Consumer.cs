@@ -35,9 +35,10 @@ internal class Consumer
 
     public async Task Consume()
     {
+        string queueName = "form_contact";
 
         channel.QueueDeclare(
-            queue: "form_contact",
+            queue: queueName,
             durable: true,
             exclusive: false,
             autoDelete: false,
@@ -50,7 +51,7 @@ internal class Consumer
             var body = ea.Body.ToArray();
             var message = Encoding.UTF8.GetString(body);
             Messages.Enqueue(message);
-            await Console.Out.WriteLineAsync("Message consumed.");
+            await Console.Out.WriteLineAsync($"----- Message consumed at {DateTime.Now}. -----");
             //logger
         };
 
