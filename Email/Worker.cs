@@ -16,7 +16,7 @@ public class Worker : BackgroundService
     {
         var consumer = new Consumer();
 
-        await Task.Run(() => consumer.Consume(Environment.GetEnvironmentVariable("QUEUE_NAME")));
+        await Task.Run(() => consumer.Consume());
         await Task.Run(() => consumer.ProcessMessages());
 
         while (!stoppingToken.IsCancellationRequested)

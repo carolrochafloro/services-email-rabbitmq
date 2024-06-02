@@ -33,11 +33,11 @@ internal class Consumer
         _sendEmail = new SendEmail();
     }
 
-    public async Task Consume(string queueName)
+    public async Task Consume()
     {
 
         channel.QueueDeclare(
-            queue: queueName,
+            queue: "form_contact",
             durable: true,
             exclusive: false,
             autoDelete: false,
@@ -50,6 +50,7 @@ internal class Consumer
             var body = ea.Body.ToArray();
             var message = Encoding.UTF8.GetString(body);
             Messages.Enqueue(message);
+            await Console.Out.WriteLineAsync("Message consumed.");
             //logger
         };
 
