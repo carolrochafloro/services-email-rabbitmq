@@ -17,10 +17,10 @@ public class Worker : BackgroundService
         var consumer = new Consumer();
 
         await Task.Run(() => consumer.Consume());
-        await Task.Run(() => consumer.ProcessMessages());
 
         while (!stoppingToken.IsCancellationRequested)
         {
+            await Task.Run(() => consumer.ProcessMessages());
 
             if (_logger.IsEnabled(LogLevel.Information))
             {
