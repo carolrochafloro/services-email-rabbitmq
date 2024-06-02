@@ -63,11 +63,19 @@ internal class Consumer
         //logger - mensagem
     }
 
-    public async Task ProcessMessages()
+    public async Task<bool> ProcessMessages()
     {
+        bool isEmailSent = false;
+
         if (Messages.TryDequeue(out var message))
         {
-            await _sendEmail.Send(message);
+            isEmailSent = await _sendEmail.Send(message);
         }
+
+        if (isEmailSent)
+        {
+            return true;
+        }
+        return false;
     }
 }
