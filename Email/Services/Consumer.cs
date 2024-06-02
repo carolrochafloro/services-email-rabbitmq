@@ -33,7 +33,7 @@ internal class Consumer
         _sendEmail = new SendEmail();
     }
 
-    public async Task Consume()
+    public Task Consume()
     {
         string queueName = "form_contact";
 
@@ -59,7 +59,7 @@ internal class Consumer
                             autoAck: true,
                             consumer: consumer);
 
-
+        return Task.CompletedTask;
         //logger - mensagem
     }
 
