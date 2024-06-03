@@ -14,5 +14,6 @@ builder.Services.AddDbContext<EmailContext>(options =>
 {
     options.UseSqlServer(connectionString);
 });
+
 var host = builder.Build();
 host.Run();

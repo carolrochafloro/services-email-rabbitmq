@@ -1,36 +1,41 @@
 namespace Email;
-using dotenv.net;
+using Email.Context;
 using Email.Services;
+using Microsoft.Extensions.DependencyInjection;
 
 public class Worker : BackgroundService
 {
     private readonly ILogger<Worker> _logger;
+    private readonly IServiceScopeFactory _scopeFactory;
 
-    public Worker(ILogger<Worker> logger)
+    public Worker(IServiceScopeFactory serviceScopeFactory, ILogger<Worker> logger)
     {
         _logger = logger;
-        DotEnv.Load();
+        _scopeFactory = serviceScopeFactory;
+
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        var consumer = new Consumer();
-
-        await Task.Run(() => consumer.Consume());
-
-        while (!stoppingToken.IsCancellationRequested)
+        using (var scope = _scopeFactory.CreateScope())
         {
-            await Task.Run(() => consumer.ProcessMessages());
+            var context = scope.ServiceProvider.GetRequiredService<EmailContext>();
+            var consumer = new Consumer(context);
 
-            if (_logger.IsEnabled(LogLevel.Information))
+            await Task.Run(() => consumer.Consume());
+
+            while (!stoppingToken.IsCancellationRequested)
             {
-                _logger.LogInformation("Consuming messages.");
-            }
-          
-            await Task.Delay(1000, stoppingToken);
-        }
-    }
+                await Task.Run(() => consumer.HandleMessages());
 
-    // criar task para monitorar DB por mensagens não enviadas
-    // e tentar novamente, atualizar o db
+                if (_logger.IsEnabled(LogLevel.Information))
+                {
+                    _logger.LogInformation("Consuming messages.");
+                }
+
+                await Task.Delay(1000, stoppingToken);
+            }
+        }
+
+    }
 }
