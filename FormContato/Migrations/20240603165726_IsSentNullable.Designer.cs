@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FormContato.Migrations
 {
     [DbContext(typeof(FCDbContext))]
-    [Migration("20240531173308_ThirdMigration")]
-    partial class ThirdMigration
+    [Migration("20240603165726_IsSentNullable")]
+    partial class IsSentNullable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -35,7 +35,7 @@ namespace FormContato.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsSent")
+                    b.Property<bool?>("IsSent")
                         .HasColumnType("bit");
 
                     b.Property<string>("Mensagem")

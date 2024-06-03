@@ -32,7 +32,7 @@ namespace FormContato.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsSent")
+                    b.Property<bool?>("IsSent")
                         .HasColumnType("bit");
 
                     b.Property<string>("Mensagem")
