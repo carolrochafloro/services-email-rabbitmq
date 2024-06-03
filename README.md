@@ -6,4 +6,5 @@ Projeto de microservices para receber contatos em uma aplicação MVC, salvar no
 - Testes;
 - Tela de cadastro;
 - Tela de login;
-- Tela de visualização de mensagens.
+- Tela de visualização de mensagens;
+- Docker-compose: SQL Server, RabbitMQ, projeto Email e projeto FormContato.
