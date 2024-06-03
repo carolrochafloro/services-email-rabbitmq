@@ -3,7 +3,6 @@ Projeto de microservices para receber contatos em uma aplicação MVC, salvar no
 
 ## Backlog
 - Filtro de exceção global;
-- Filtro de logging nos dois projetos;
 - Testes;
 - Tela de cadastro;
 - Tela de login;
