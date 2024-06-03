@@ -4,6 +4,7 @@ namespace FormContato.DTOs;
 
 public class ContactDTO
 {
+    public Guid Id { get; set; }
     [Required]
     public string? Nome { get; set; }
 

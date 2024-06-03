@@ -25,7 +25,7 @@ public class Producer : IDisposable
         channel = connection.CreateModel();
     }
 
-    public void Produce(ContactViewModel contact ) { 
+    public void Produce(ContactDTO contact ) { 
         string queueName = Environment.GetEnvironmentVariable("QUEUE_NAME");
         channel.QueueDeclare(
             queue: queueName,

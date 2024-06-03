@@ -7,7 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Email.test", "Notificacoes.
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Itens de Solução", "Itens de Solução", "{576F8B0E-C04A-4B7B-A5CA-EAA5DF0F8D0E}"
 	ProjectSection(SolutionItems) = preProject
-		.env = .env
 		.gitignore = .gitignore
 	EndProjectSection
 EndProject
@@ -15,7 +14,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FormContato", "FormContato\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FormContato.test", "FormContato.test\FormContato.test.csproj", "{F67D9D09-2DB4-47CE-9695-34AA51AAADDD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Email", "Email\Email.csproj", "{B4E2F087-6989-474E-99F4-091344CD22F7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Email", "Email\Email.csproj", "{B4E2F087-6989-474E-99F4-091344CD22F7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

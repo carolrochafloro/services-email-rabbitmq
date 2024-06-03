@@ -36,17 +36,16 @@ public class HomeController : Controller
         model.Email = contato.Email;
         model.Mensagem = contato.Mensagem;
 
-        string queueName = "form_contact";
-
         try
         {
             _context.Add(model);
             await _context.SaveChangesAsync();
+            contato.Id = model.Id;
             var producer = new Producer();
-            producer.Produce(model);
+            producer.Produce(contato);
             return View("Success");
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             return View("Error");
         }
