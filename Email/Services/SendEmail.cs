@@ -12,7 +12,7 @@ using System.Text.Json;
 using Microsoft.Extensions.Logging;
 
 namespace Email.Services;
-internal class SendEmail
+public class SendEmail
 {
     private readonly ILogger<SendEmail> _logger;
     public SendEmail(ILogger<SendEmail> logger)

@@ -3,7 +3,7 @@ using FormContato.Models;
 
 
 namespace Email.Services;
-internal class UpdateDB
+public class UpdateDB
 {
     private readonly EmailContext _context;
     private readonly ILogger<UpdateDB> _logger;

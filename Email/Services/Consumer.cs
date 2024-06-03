@@ -14,7 +14,7 @@ using RabbitMQ.Client.Events;
 
 
 namespace Email.Services;
-internal class Consumer
+public class Consumer
 {
     protected readonly string? hostName = Environment.GetEnvironmentVariable("HOST_NAME");
     protected ConnectionFactory factory;
@@ -30,11 +30,14 @@ internal class Consumer
     // logger
 
 
-    public Consumer(EmailContext context, ILogger<Consumer> logger)
+    public Consumer(EmailContext context, ILogger<Consumer> logger, ILogger<UpdateDB> loggerDb, ILogger<SendEmail> loggerSendEmail)
     {
         factory = new ConnectionFactory { HostName = "localhost" };
         connection = factory.CreateConnection();
         channel = connection.CreateModel();
+        _loggerDb = loggerDb;
+        _loggerSendEmail = loggerSendEmail;
+        _logger = logger;
         _sendEmail = new SendEmail(_loggerSendEmail);
         _context = context;
         _updateDB = new UpdateDB(_context, _loggerDb);
