@@ -7,7 +7,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using dotenv.net;
-using Email.Models;
+using Email.Context;
 using RabbitMQ;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
@@ -22,15 +22,19 @@ internal class Consumer
     protected IModel channel;
     private readonly SendEmail _sendEmail;
     public ConcurrentQueue<string> Messages { get; } = new ConcurrentQueue<string>();
+    private readonly EmailContext _context;
+    private readonly UpdateDB _updateDB;
     // logger
 
 
-    public Consumer()
+    public Consumer(EmailContext context)
     {
         factory = new ConnectionFactory { HostName = "localhost" };
         connection = factory.CreateConnection();
         channel = connection.CreateModel();
         _sendEmail = new SendEmail();
+        _context = context;
+        _updateDB = new UpdateDB(_context);
     }
 
     public Task Consume()
@@ -63,19 +67,19 @@ internal class Consumer
         //logger - mensagem
     }
 
-    public async Task<bool> ProcessMessages()
+    public async Task HandleMessages()
     {
-        bool isEmailSent = false;
-
+     
         if (Messages.TryDequeue(out var message))
         {
-            isEmailSent = await _sendEmail.Send(message);
+            var messageObject = JsonSerializer.Deserialize<Dictionary<string, string>>(message);
+            bool isEmailSent = await _sendEmail.Send(messageObject);
+            Guid id = Guid.Parse(messageObject["Id"]);
+            await _updateDB.UpdateIsSent(isEmailSent, id);
         }
 
-        if (isEmailSent)
-        {
-            return true;
-        }
-        return false;
+        // criar novo contactDTO com id e sem issent para enviar p/ o rabbit, remover
+        // getboolean, alterar parâmetro de sendemail p/ dictionary string string, converter id p/ Guid
+
     }
 }

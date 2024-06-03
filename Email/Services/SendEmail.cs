@@ -17,30 +17,32 @@ internal class SendEmail
     {
         DotEnv.Load();
     }
-    public async Task<bool> Send(string message)
+
+    
+    public async Task<bool> Send(Dictionary<string, string> messageObject)
     {
-        if (message == null)
+        if (messageObject == null)
         {
             throw new ArgumentNullException("Message not found");
         }
 
-        var messageObject = JsonSerializer.Deserialize<Dictionary<string, string>>(message);
         string currentDirectory = Directory.GetCurrentDirectory();
-        string htmlFilePath = Path.Combine(currentDirectory, "Models", "Email.html");
+        string htmlFilePath = Path.Combine(currentDirectory, "Templates", "Email.html");
 
         var client = new SendGridClient(Environment.GetEnvironmentVariable("SENDGRID_API_KEY"));
         var from = new EmailAddress(Environment.GetEnvironmentVariable("FROM_EMAIL"), "Carol Rocha");
-        var subject = "You have a new message";
+        var subject = "Check your messages!";
         var to = new EmailAddress(Environment.GetEnvironmentVariable("TO_EMAIL"));
-        var plainText = message;
+        var plainText = messageObject["Nome"] + messageObject["Email"] + messageObject["Mensagem"];
         var htmlTemplate = await File.ReadAllTextAsync(htmlFilePath);
         var html = string.Format(htmlTemplate, messageObject["Nome"], messageObject["Email"], messageObject["Mensagem"]);
         var msg = MailHelper.CreateSingleEmail(from, to, subject, plainText, html);
+
         var response = await client.SendEmailAsync(msg);
 
         if (response.IsSuccessStatusCode)
         {
-            await Console.Out.WriteLineAsync($"E-mail successfully sent: {response.StatusCode}");
+            await Console.Out.WriteLineAsync($"E-mail successfully sent.");
             return true;
         }
         else
