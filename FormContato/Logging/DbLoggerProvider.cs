@@ -4,16 +4,18 @@ namespace FormContato.Logging;
 
 public class DbLoggerProvider : ILoggerProvider
 {
-    private readonly FCDbContext _dbContext;
+   
+    private readonly IServiceScopeFactory _serviceScopeFactory;
 
-    public DbLoggerProvider(FCDbContext dbContext)
+
+    public DbLoggerProvider(IServiceScopeFactory serviceScopeFactory)
     {
-        _dbContext = dbContext;
+        _serviceScopeFactory = serviceScopeFactory;
     }
 
     public ILogger CreateLogger(string categoryName)
     {
-        return new DbLogger(_dbContext);
+        return new DbLogger(_serviceScopeFactory);
     }
 
     public void Dispose()

@@ -6,11 +6,11 @@ namespace FormContato.Logging;
 
 public class DbLogger : ILogger
 {
-    private readonly FCDbContext _dbContext;
+    private readonly IServiceScopeFactory _serviceScopeFactory;
 
-    public DbLogger(FCDbContext dbContext)
+    public DbLogger(IServiceScopeFactory serviceScopeFactory)
     {
-        _dbContext = dbContext;
+        _serviceScopeFactory = serviceScopeFactory;
     }
 
     public IDisposable? BeginScope<TState>(TState state) where TState : notnull
@@ -23,19 +23,23 @@ public class DbLogger : ILogger
         return true;
     }
 
-    public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
+    public async void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
     {
-
-        var log = new LogModel
+        using (var scope = _serviceScopeFactory.CreateScope())
         {
-            LogDate = DateTime.Now,
-            LogLevel = logLevel.ToString(),
-            LogType = typeof(TState).FullName,
-            Source = exception?.Source,
-            StackTrace = exception?.StackTrace,
-        };
+            var dbContext = scope.ServiceProvider.GetRequiredService<FCDbContext>();
+            var log = new LogModel
 
-        _dbContext.Logs.Add(log);
-        _dbContext.SaveChanges();
+            {
+                LogDate = DateTime.Now,
+                LogLevel = logLevel.ToString(),
+                LogType = typeof(TState).FullName,
+                Source = exception?.Source,
+                StackTrace = exception?.StackTrace,
+            };
+
+            dbContext.Logs.Add(log);
+            await dbContext.SaveChangesAsync();
+        }
     }
 }
