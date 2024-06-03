@@ -6,10 +6,12 @@ namespace Email.Services;
 internal class UpdateDB
 {
     private readonly EmailContext _context;
+    private readonly ILogger<UpdateDB> _logger;
 
-    public UpdateDB(EmailContext context)
+    public UpdateDB(EmailContext context, ILogger<UpdateDB> logger)
     {
         _context = context;
+        _logger = logger;
     }
 
     public async Task UpdateIsSent(bool response, Guid id)
@@ -32,8 +34,6 @@ internal class UpdateDB
         }
         _context.Update(user);
         await _context.SaveChangesAsync();
-
-        await Console.Out.WriteLineAsync($"Contact Id {user.Id} updated.");
-
+        _logger.LogInformation($"Contact Id {user.Id} updated.");
     }
 }

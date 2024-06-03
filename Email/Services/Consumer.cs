@@ -24,17 +24,21 @@ internal class Consumer
     public ConcurrentQueue<string> Messages { get; } = new ConcurrentQueue<string>();
     private readonly EmailContext _context;
     private readonly UpdateDB _updateDB;
+    private readonly ILogger<UpdateDB> _loggerDb;
+    private readonly ILogger<SendEmail> _loggerSendEmail;
+    private readonly ILogger<Consumer> _logger;
     // logger
 
 
-    public Consumer(EmailContext context)
+    public Consumer(EmailContext context, ILogger<Consumer> logger)
     {
         factory = new ConnectionFactory { HostName = "localhost" };
         connection = factory.CreateConnection();
         channel = connection.CreateModel();
-        _sendEmail = new SendEmail();
+        _sendEmail = new SendEmail(_loggerSendEmail);
         _context = context;
-        _updateDB = new UpdateDB(_context);
+        _updateDB = new UpdateDB(_context, _loggerDb);
+        _logger = logger;
     }
 
     public Task Consume()
@@ -55,8 +59,8 @@ internal class Consumer
             var body = ea.Body.ToArray();
             var message = Encoding.UTF8.GetString(body);
             Messages.Enqueue(message);
-            await Console.Out.WriteLineAsync($"----- Message consumed at {DateTime.Now}. -----");
-            //logger
+            _logger.LogInformation($"----- Message consumed at {DateTime.Now}. -----");
+
         };
 
         channel.BasicConsume(queue: queueName,
@@ -64,7 +68,6 @@ internal class Consumer
                             consumer: consumer);
 
         return Task.CompletedTask;
-        //logger - mensagem
     }
 
     public async Task HandleMessages()
@@ -78,8 +81,6 @@ internal class Consumer
             await _updateDB.UpdateIsSent(isEmailSent, id);
         }
 
-        // criar novo contactDTO com id e sem issent para enviar p/ o rabbit, remover
-        // getboolean, alterar parâmetro de sendemail p/ dictionary string string, converter id p/ Guid
 
     }
 }

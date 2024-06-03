@@ -9,16 +9,19 @@ using SendGrid.Helpers.Errors.Model;
 using SendGrid.Helpers.Mail;
 using SendGrid.Helpers.Mail.Model;
 using System.Text.Json;
+using Microsoft.Extensions.Logging;
 
 namespace Email.Services;
 internal class SendEmail
 {
-    public SendEmail()
+    private readonly ILogger<SendEmail> _logger;
+    public SendEmail(ILogger<SendEmail> logger)
     {
         DotEnv.Load();
+        _logger = logger;
     }
 
-    
+
     public async Task<bool> Send(Dictionary<string, string> messageObject)
     {
         if (messageObject == null)
@@ -42,12 +45,12 @@ internal class SendEmail
 
         if (response.IsSuccessStatusCode)
         {
-            await Console.Out.WriteLineAsync($"E-mail successfully sent.");
+            _logger.LogInformation("Your e-mail was sent.");
             return true;
         }
         else
         {
-            Console.WriteLine($"Error: {response.StatusCode}");
+            _logger.LogInformation($"Error: {response.StatusCode}");
             return false;
         }
     }
