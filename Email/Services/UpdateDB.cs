@@ -31,7 +31,7 @@ internal class UpdateDB
             user.IsSent = false;
         }
         _context.Update(user);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
 
         await Console.Out.WriteLineAsync($"Contact Id {user.Id} updated.");
 
