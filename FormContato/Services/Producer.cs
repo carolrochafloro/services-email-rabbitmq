@@ -1,4 +1,6 @@
-﻿using FormContato.DTOs;
+﻿using dotenv.net;
+using FormContato.DTOs;
+using FormContato.Models;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
@@ -17,13 +19,14 @@ public class Producer : IDisposable
     // conexão com o servidor no construtor
     public Producer()
     {
-        factory = new ConnectionFactory { HostName = "localhost" };
+        DotEnv.Load();
+        factory = new ConnectionFactory { HostName = hostName };
         connection = factory.CreateConnection();
         channel = connection.CreateModel();
     }
 
-    public void Produce(string queueName, ContactDTO contact)
-    {
+    public void Produce(ContactViewModel contact ) { 
+        string queueName = Environment.GetEnvironmentVariable("QUEUE_NAME");
         channel.QueueDeclare(
             queue: queueName,
             durable: true,

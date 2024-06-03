@@ -40,10 +40,10 @@ public class HomeController : Controller
 
         try
         {
-            var producer = new Producer();
-            producer.Produce(queueName, contato);
             _context.Add(model);
             await _context.SaveChangesAsync();
+            var producer = new Producer();
+            producer.Produce(model);
             return View("Success");
         }
         catch (Exception ex)
