@@ -3,7 +3,6 @@ using FormContato.DTOs;
 using FormContato.Models;
 using FormContato.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 
 namespace FormContato.Controllers;

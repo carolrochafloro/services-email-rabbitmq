@@ -1,17 +1,15 @@
 ﻿using dotenv.net;
 using FormContato.DTOs;
-using FormContato.Models;
-using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
 using System.Text;
-using System.Threading.Channels;
 
 namespace FormContato.Services;
 
 public class Producer : IDisposable
 {
     protected readonly string? hostName = Environment.GetEnvironmentVariable("HOST_NAME");
+    protected readonly string? queueName = Environment.GetEnvironmentVariable("QUEUE_NAME");
     protected ConnectionFactory factory;
     protected IConnection connection;
     protected IModel channel;
@@ -25,8 +23,9 @@ public class Producer : IDisposable
         channel = connection.CreateModel();
     }
 
-    public void Produce(ContactDTO contact ) { 
-        string queueName = Environment.GetEnvironmentVariable("QUEUE_NAME");
+    public void Produce(ContactDTO contact)
+    {
+
         channel.QueueDeclare(
             queue: queueName,
             durable: true,
@@ -34,16 +33,15 @@ public class Producer : IDisposable
             autoDelete: false,
             arguments: null
             );
+
         string message = JsonConvert.SerializeObject(contact);
         var body = Encoding.UTF8.GetBytes(message);
 
         channel.BasicPublish(exchange: "",
-                                 routingKey: queueName,
-                                 basicProperties: null,
-                                 body: body);
+                     routingKey: queueName,
+                     basicProperties: null,
+                     body: body);
     }
-
-
     public void Dispose()
     {
         channel.Close();

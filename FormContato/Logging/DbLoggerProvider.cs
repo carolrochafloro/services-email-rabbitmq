@@ -1,10 +1,8 @@
-﻿using FormContato.Context;
-
-namespace FormContato.Logging;
+﻿namespace FormContato.Logging;
 
 public class DbLoggerProvider : ILoggerProvider
 {
-   
+
     private readonly IServiceScopeFactory _serviceScopeFactory;
 
 
