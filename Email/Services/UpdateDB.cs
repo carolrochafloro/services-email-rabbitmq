@@ -21,7 +21,7 @@ public class UpdateDB
 
         if (user is null)
         {
-            throw new Exception("User not found.");
+            throw new Exception("----- Error: User not found. -----");
         }
 
         if (response)
@@ -32,8 +32,22 @@ public class UpdateDB
         {
             user.IsSent = false;
         }
+
         _context.Update(user);
-        await _context.SaveChangesAsync();
-        _logger.LogInformation($"Contact Id {user.Id} updated.");
+
+        try
+        {
+
+            await _context.SaveChangesAsync();
+            _logger.LogInformation($"Contact Id {user.Id} updated.");
+
+        } catch (Exception ex)
+        {
+
+            _logger.LogError($"----- Error on UpdateDB: {ex}");
+
+        }
+       
+
     }
 }

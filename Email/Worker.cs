@@ -5,10 +5,6 @@ using Microsoft.Extensions.DependencyInjection;
 
 public class Worker : BackgroundService
 {
-    //private readonly ILogger<Worker> _logger;
-    //private readonly IServiceScopeFactory _scopeFactory;
-    //private readonly ILogger<Consumer> _loggerConsumer;
-
     private readonly ILogger<Worker> _logger;
     private readonly IServiceScopeFactory _scopeFactory;
     private readonly ILogger<Consumer> _loggerConsumer;
@@ -30,20 +26,27 @@ public class Worker : BackgroundService
         {
             var context = scope.ServiceProvider.GetRequiredService<EmailContext>();
             var consumer = new Consumer(context, _loggerConsumer, _loggerDb, _loggerSendEmail);
-
-            await Task.Run(() => consumer.Consume());
-
-            while (!stoppingToken.IsCancellationRequested)
+            try
             {
-                await Task.Run(() => consumer.HandleMessages());
+                await Task.Run(() => consumer.Consume());
 
-                if (_logger.IsEnabled(LogLevel.Information))
+                while (!stoppingToken.IsCancellationRequested)
                 {
-                    _logger.LogInformation("Consuming messages.");
-                }
+                    await Task.Run(() => consumer.HandleMessages());
 
-                await Task.Delay(1000, stoppingToken);
+                    if (_logger.IsEnabled(LogLevel.Information))
+                    {
+                        _logger.LogInformation("Consuming messages.");
+                    }
+
+                    await Task.Delay(1000, stoppingToken);
+                }
             }
+            catch (Exception ex)
+            {
+                _logger.LogError("----- Error: -----\n" + ex.Message);
+            }
+
         }
 
     }

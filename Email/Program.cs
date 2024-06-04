@@ -1,7 +1,7 @@
-using Email;
 using dotenv.net;
-using Microsoft.EntityFrameworkCore;
+using Email;
 using Email.Context;
+using Microsoft.EntityFrameworkCore;
 
 var builder = Host.CreateApplicationBuilder(args);
 builder.Services.AddHostedService<Worker>();

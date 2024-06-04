@@ -1,15 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using dotenv.net;
+﻿using dotenv.net;
 using SendGrid;
-using SendGrid.Helpers.Errors.Model;
 using SendGrid.Helpers.Mail;
-using SendGrid.Helpers.Mail.Model;
-using System.Text.Json;
-using Microsoft.Extensions.Logging;
 
 namespace Email.Services;
 public class SendEmail
@@ -45,12 +36,12 @@ public class SendEmail
 
         if (response.IsSuccessStatusCode)
         {
-            _logger.LogInformation("Your e-mail was sent.");
+            _logger.LogInformation("----- Success: Your e-mail was sent.");
             return true;
         }
         else
         {
-            _logger.LogInformation($"Error: {response.StatusCode}");
+            _logger.LogInformation($"----- Error: {response.StatusCode}");
             return false;
         }
     }

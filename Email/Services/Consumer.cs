@@ -1,16 +1,9 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
-using dotenv.net;
-using Email.Context;
-using RabbitMQ;
+﻿using Email.Context;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
+using System.Collections.Concurrent;
+using System.Text;
+using System.Text.Json;
 
 
 namespace Email.Services;
@@ -27,8 +20,6 @@ public class Consumer
     private readonly ILogger<UpdateDB> _loggerDb;
     private readonly ILogger<SendEmail> _loggerSendEmail;
     private readonly ILogger<Consumer> _logger;
-    // logger
-
 
     public Consumer(EmailContext context, ILogger<Consumer> logger, ILogger<UpdateDB> loggerDb, ILogger<SendEmail> loggerSendEmail)
     {
@@ -65,17 +56,23 @@ public class Consumer
             _logger.LogInformation($"----- Message consumed at {DateTime.Now}. -----");
 
         };
-
-        channel.BasicConsume(queue: queueName,
-                            autoAck: true,
-                            consumer: consumer);
+        try
+        {
+            channel.BasicConsume(queue: queueName,
+                    autoAck: true,
+                    consumer: consumer);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError($"----- Error on Consumer: {ex}");
+        }
 
         return Task.CompletedTask;
     }
 
     public async Task HandleMessages()
     {
-     
+
         if (Messages.TryDequeue(out var message))
         {
             var messageObject = JsonSerializer.Deserialize<Dictionary<string, string>>(message);
