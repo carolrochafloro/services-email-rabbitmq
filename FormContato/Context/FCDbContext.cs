@@ -11,4 +11,5 @@ public class FCDbContext : DbContext
     }
     public DbSet<ContactViewModel> Contacts { get; set; }
     public DbSet<LogModel> Logs { get; set; }
+    public DbSet<UserModel> Users { get; set; }
 }
