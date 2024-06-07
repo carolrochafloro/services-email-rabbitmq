@@ -1,4 +1,4 @@
-# Microservices - envio de e-mail
+# Serviços - envio de e-mail com worker e RabbitMQ
 Projeto de serviços para receber contatos em uma aplicação MVC, salvar no SQL Server, publicar mensagem no RabbitMQ e um worker consumindo mensagens do RabbitMQ e enviando e-mail através do Sendgrid.
 
 ## Sobre o desenvolvimento
