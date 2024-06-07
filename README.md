@@ -10,9 +10,9 @@ Já no desenvolvimento do projeto FormContact consegui executar melhor a separa�
 ![image](https://github.com/carolrochafloro/microservices-email-rabbitmq/assets/127871333/6e89de4a-5b3d-47c4-bcea-e7118c62ab0d)
 
 ## Backlog
-- Filtro de exceção global;
 - Testes;
 - Tela de cadastro;
 - Tela de login;
 - Tela de visualização de mensagens;
-- Docker-compose: SQL Server, RabbitMQ, projeto Email e projeto FormContato.
+- Docker-compose: SQL Server, RabbitMQ, projeto Email e projeto FormContato;
+- Paginação de resultados.
