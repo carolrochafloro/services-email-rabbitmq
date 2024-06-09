@@ -16,8 +16,8 @@ public class UserModel
     public string? Password { get; set; }
     [Required]
     public string Salt { get; set; }
-    public bool IsActive { get; set; }
-    public DateTime CreatedAt { get; set; }
+    public bool IsActive { get; set; } = true;
+    public DateTime CreatedAt { get; set; } = DateTime.Now;
     public DateTime LastUpdatedAt { get; set;}
     public string? LastUpdatedBy { get; set; }
 }
