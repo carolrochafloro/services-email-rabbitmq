@@ -27,9 +27,20 @@ public class PasswordHasher
         byte[] passwordBytes = Encoding.UTF8.GetBytes(password);
         byte[] hash = hmac.ComputeHash(passwordBytes);
 
-        Salt = BitConverter.ToString(salt);
-        Password = BitConverter.ToString(hash);
+        Salt = Convert.ToBase64String(salt);
+        Password = Convert.ToBase64String(hash);
         
+    }
+
+    public bool ComparePassword(string password, string salt, string storedHash)
+    {
+        byte[] saltBytes = Convert.FromBase64String(salt);
+        var hmac = new HMACSHA256(saltBytes);
+        byte[] passwordBytes = Encoding.UTF8.GetBytes(password);
+        byte[] computedHash = hmac.ComputeHash(passwordBytes);
+        string computedHashString = Convert.ToBase64String(computedHash);
+
+        return computedHashString.Equals(storedHash);
     }
    
 }
