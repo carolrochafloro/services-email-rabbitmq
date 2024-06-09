@@ -1,5 +1,6 @@
 ﻿using dotenv.net;
 using FormContato.DTOs;
+using FormContato.Models;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
 using System.Text;
@@ -23,7 +24,7 @@ public class Producer : IDisposable
         channel = connection.CreateModel();
     }
 
-    public void Produce(ContactDTO contact)
+    public void Produce(ContactViewModel contact)
     {
 
         channel.QueueDeclare(

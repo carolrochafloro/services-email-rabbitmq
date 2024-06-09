@@ -1,6 +1,8 @@
+using AutoMapper;
 using FormContato.Context;
 using FormContato.DTOs;
 using FormContato.Models;
+using FormContato.Repositories;
 using FormContato.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
@@ -8,13 +10,13 @@ using System.Diagnostics;
 namespace FormContato.Controllers;
 public class HomeController : Controller
 {
-    //private readonly ILogger<HomeController> _logger;
-    protected readonly FCDbContext _context;
+    private readonly IUnitOfWork _unitOfWork;
+    private readonly IMapper _mapper;
 
-    public HomeController(FCDbContext context)
+    public HomeController(IUnitOfWork unitOfWork, IMapper mapper)
     {
-        //_logger = logger;
-        _context = context;
+        _unitOfWork = unitOfWork;
+        _mapper = mapper;
     }
 
     public IActionResult Index()
@@ -22,26 +24,21 @@ public class HomeController : Controller
         return View();
     }
 
-    public async Task<IActionResult> SaveMessage(ContactDTO contato)
+    public async Task<IActionResult> SaveMessage(ContactDTO contact)
     {
-        if (contato is null)
+        if (contact is null)
         {
             return View("Error");
         }
 
-        ContactViewModel model = new ContactViewModel();
-
-        model.Nome = contato.Nome;
-        model.Email = contato.Email;
-        model.Mensagem = contato.Mensagem;
+        var newContact = _mapper.Map<ContactViewModel>(contact);
 
         try
         {
-            _context.Add(model);
-            await _context.SaveChangesAsync();
-            contato.Id = model.Id;
+            _unitOfWork.ContactRepository.Create(newContact);
+            await _unitOfWork.CommitAsync();
             var producer = new Producer();
-            producer.Produce(contato);
+            producer.Produce(newContact);
             return View("Success");
         }
         catch (Exception)

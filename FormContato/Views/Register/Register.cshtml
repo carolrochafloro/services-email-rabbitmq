@@ -1,7 +1,7 @@
-﻿@model FormContato.Models.UserModel
+﻿@model FormContato.DTOs.RegisterDTO
 
 @{
-    ViewData["Title"] = "ViewRegister";
+    ViewData["Title"] = "Register";
     Layout = "~/Views/Shared/_Layout.cshtml";
     <link rel="stylesheet" href="~/Register/Style.css" />
 }
@@ -12,7 +12,7 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="ViewRegister">
+        <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
@@ -35,11 +35,7 @@
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
             @* incluir verificação *@
-            <div class="form-group">
-                <label asp-for="Password" class="control-label">Confirm your password</label>
-                <input asp-for="Password" type="password" class="form-control" />
-                <span asp-validation-for="Password" class="text-danger"></span>
-            </div>
+            
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>

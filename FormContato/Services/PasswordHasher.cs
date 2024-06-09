@@ -9,7 +9,10 @@ public class PasswordHasher
 {
     // gerar um salt aleatório e passar como chave para HMACSHA25. usar computehash para gerar o hash da senha
     // após ter passado o salt como chave. converter arrays de bytes hash e salt para string e retornar os dois.
-    public string[] HashPassword(string password)
+
+    public string Password { get; set; }
+    public string Salt { get; set; }
+    public void HashPassword(string password)
     {
        
         byte[] salt = new byte[128 / 8];
@@ -24,9 +27,8 @@ public class PasswordHasher
         byte[] passwordBytes = Encoding.UTF8.GetBytes(password);
         byte[] hash = hmac.ComputeHash(passwordBytes);
 
-        string hashedPassword = BitConverter.ToString(hash);
-
-        return [hashedPassword, BitConverter.ToString(salt)];
+        Salt = BitConverter.ToString(salt);
+        Password = BitConverter.ToString(hash);
         
     }
    

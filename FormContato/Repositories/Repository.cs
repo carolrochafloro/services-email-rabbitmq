@@ -13,7 +13,7 @@ public class Repository<T> : IRepository<T> where T : class
         _dbContext = dbcontext;
     }
 
-    public T CreateAsync(T entity)
+    public T Create(T entity)
     {
         _dbContext.Set<T>().Add(entity);
         return entity;
