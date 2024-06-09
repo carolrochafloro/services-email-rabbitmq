@@ -24,7 +24,7 @@ public class Producer : IDisposable
         channel = connection.CreateModel();
     }
 
-    public void Produce(ContactViewModel contact)
+    public void Produce(ContactModel contact)
     {
 
         channel.QueueDeclare(

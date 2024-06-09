@@ -2,6 +2,6 @@
 
 namespace FormContato.Repositories;
 
-public interface IContactRepository : IRepository<ContactViewModel>
+public interface IContactRepository : IRepository<ContactModel>
 {
 }

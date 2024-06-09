@@ -1,7 +1,6 @@
 using dotenv.net;
 using FormContato.Context;
 using FormContato.DTOs.Mapping;
-using FormContato.Logging;
 using FormContato.Repositories;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,7 +16,7 @@ builder.Services.AddDbContext<FCDbContext>(options =>
     options.UseSqlServer(connectionString);
 });
 
-builder.Services.AddSingleton<ILoggerProvider, DbLoggerProvider>();
+//builder.Services.AddSingleton<ILoggerProvider, DbLoggerProvider>();
 
 builder.Services.AddAutoMapper(typeof(Program));
 

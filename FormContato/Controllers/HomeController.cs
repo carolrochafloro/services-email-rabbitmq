@@ -33,7 +33,7 @@ public class HomeController : Controller
             return View("Error");
         }
 
-        var newContact = _mapper.Map<ContactViewModel>(contact);
+        var newContact = _mapper.Map<ContactModel>(contact);
 
         try
         {
