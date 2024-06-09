@@ -10,34 +10,39 @@ public class RegisterController : Controller
 {
     private readonly IMapper _mapper;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly PasswordHasher _hasher;
 
-    public RegisterController(IMapper mapper, IUnitOfWork unitOfWork)
+    public RegisterController(IMapper mapper, IUnitOfWork unitOfWork, PasswordHasher hasher)
     {
         _mapper = mapper;
         _unitOfWork = unitOfWork;
+        _hasher = hasher;
     }
 
-    // GET: RegisterController
     public ActionResult Index()
     {
         return View("Register");
     }
 
-    // POST: RegisterController/Create - Cadastrar
     [HttpPost]
-    //[ValidateAntiForgeryToken]
     public async Task<ActionResult> Create(RegisterDTO user)
     {
         try
         {
+
+            var checkUser = _unitOfWork.UserRepository.Get(u => u.Email == user.Email);
+
+            if (checkUser !=  null)
+            {
+                return BadRequest("This user is already registered.");
+            }
  
-            PasswordHasher hasher = new PasswordHasher();
-            hasher.HashPassword(user.Password);
+            _hasher.HashPassword(user.Password);
 
             var newUser = _mapper.Map<UserModel>(user);
 
-            newUser.Password = hasher.Password;
-            newUser.Salt = hasher.Salt;
+            newUser.Password = _hasher.Password;
+            newUser.Salt = _hasher.Salt;
             newUser.Role = RoleEnum.User;
 
             _unitOfWork.UserRepository.Create(newUser);

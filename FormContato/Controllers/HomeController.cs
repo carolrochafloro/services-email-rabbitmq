@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
 namespace FormContato.Controllers;
+
+// ideia: tirar o form de home e só permitir o acesso a ele com url personalizada com infos do usuário cadastado
 public class HomeController : Controller
 {
     private readonly IUnitOfWork _unitOfWork;
