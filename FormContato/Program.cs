@@ -1,8 +1,12 @@
 using dotenv.net;
 using FormContato.Context;
-using FormContato.DTOs.Mapping;
 using FormContato.Repositories;
+using FormContato.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Configuration;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,10 +24,33 @@ builder.Services.AddDbContext<FCDbContext>(options =>
 
 builder.Services.AddAutoMapper(typeof(Program));
 
+builder.Services.AddScoped<PasswordHasher>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IContactRepository, ContactRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+builder.Services.AddTransient<JwtHandler>();
+
+builder.Services
+    .AddAuthentication(x =>
+    {
+        x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    });
+
+    //.AddJwtBearer(x =>
+    //{
+    //    x.RequireHttpsMetadata = false;
+    //    x.SaveToken = true;
+    //    x.TokenValidationParameters = new TokenValidationParameters
+    //    {
+    //        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Environment.GetEnvironmentVariable("JWT_SECURITY_TOKEN"))),
+    //        ValidateIssuer = false,
+    //        ValidateAudience = false,
+    //    };
+    //});
+builder.Services.AddAuthorization();
+
 
 
 var app = builder.Build();
@@ -43,7 +70,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
