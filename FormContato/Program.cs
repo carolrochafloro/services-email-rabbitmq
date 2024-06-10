@@ -10,6 +10,26 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services
+    .AddAuthentication(x =>
+    {
+        x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddJwtBearer(x =>
+    {
+        x.RequireHttpsMetadata = false;
+        x.SaveToken = true;
+        x.TokenValidationParameters = new TokenValidationParameters
+        {
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Environment.GetEnvironmentVariable("JWT_PRIVATE_KEY"))),
+            ValidateIssuer = false,
+            ValidateAudience = false,
+        };
+    });
+
+builder.Services.AddAuthorization();
+
 builder.Services.AddControllersWithViews();
 
 DotEnv.Load();
@@ -31,25 +51,7 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddTransient<JwtHandler>();
 
-builder.Services
-    .AddAuthentication(x =>
-    {
-        x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-        x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    });
 
-    //.AddJwtBearer(x =>
-    //{
-    //    x.RequireHttpsMetadata = false;
-    //    x.SaveToken = true;
-    //    x.TokenValidationParameters = new TokenValidationParameters
-    //    {
-    //        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Environment.GetEnvironmentVariable("JWT_SECURITY_TOKEN"))),
-    //        ValidateIssuer = false,
-    //        ValidateAudience = false,
-    //    };
-    //});
-builder.Services.AddAuthorization();
 
 
 

@@ -18,8 +18,9 @@ public class JwtHandler
     private static ClaimsIdentity GenerateClaims(UserModel user)
     {
         var claimsIdentity = new ClaimsIdentity();
-        claimsIdentity.AddClaim(new Claim(ClaimTypes.Name, user.Email));
+        claimsIdentity.AddClaim(new Claim(ClaimTypes.Email, user.Email));
         claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, user.Role.ToString()));
+        claimsIdentity.AddClaim(new Claim(ClaimTypes.Name, user.Id.ToString()));
 
         return claimsIdentity;
     }
