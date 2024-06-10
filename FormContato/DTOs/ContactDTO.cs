@@ -14,4 +14,6 @@ public class ContactDTO
     [Required]
     public string? Mensagem { get; set; }
 
+    public bool IsSent { get; set; }
+
 }
