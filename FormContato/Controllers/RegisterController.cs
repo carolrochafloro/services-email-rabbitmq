@@ -19,8 +19,9 @@ public class RegisterController : Controller
         _hasher = hasher;
     }
 
-    public ActionResult Index()
+    public ActionResult Index(LoginDTO login = null)
     {
+        var model = login != null ? new RegisterDTO { Email = login.Email } : new RegisterDTO();
         return View("Register");
     }
 
@@ -48,7 +49,12 @@ public class RegisterController : Controller
             _unitOfWork.UserRepository.Create(newUser);
             await _unitOfWork.CommitAsync();
 
-            return RedirectToAction(nameof(Index)); // redirecionar para página inicial de usuário logado
+            var handler = new JwtHandler();
+
+            var token = handler.GenerateToken(newUser);
+
+            Response.Headers.Append("Authorization", "Bearer " + token);
+            return RedirectToAction("Index", "Dashboard"); // redirecionar para página inicial de usuário logado
         }
         catch
         {

@@ -36,7 +36,7 @@ public class LoginController : Controller
 
             if (user is null)
             {
-                return BadRequest("User not found.");
+                return RedirectToAction("Index", "Register", login);
             }
 
             var hasher = new PasswordHasher();
@@ -52,7 +52,7 @@ public class LoginController : Controller
             var token = _jwtHandler.GenerateToken(user);
 
             Response.Headers.Append("Authorization", "Bearer " + token);
-            return View("Login"); // retornar página de usuário logado
+            return RedirectToAction("Index", "Dashboard");
 
         } catch (Exception)
         {
