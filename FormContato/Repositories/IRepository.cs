@@ -4,7 +4,7 @@ namespace FormContato.Repositories;
 
 public interface IRepository<T>
 {
-    public IEnumerable<T> GetAllAsync();
+    public Task<IEnumerable<T>> GetAllAsync();
     public T? Get(Expression<Func<T, bool>> predicate);
     public T Create(T entity);
     public T UpdateAsync(T entity);

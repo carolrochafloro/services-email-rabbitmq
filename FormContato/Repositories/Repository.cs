@@ -25,9 +25,9 @@ public class Repository<T> : IRepository<T> where T : class
         return _dbContext.Set<T>().FirstOrDefault(predicate);
     }
 
-    public IEnumerable<T> GetAllAsync()
+    public async Task<IEnumerable<T>> GetAllAsync()
     {
-        return _dbContext.Set<T>().AsNoTracking().ToList();
+        return await _dbContext.Set<T>().AsNoTracking().ToListAsync();
     }
 
     public T UpdateAsync(T entity)
