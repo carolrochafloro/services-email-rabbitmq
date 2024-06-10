@@ -3,18 +3,9 @@
 }
 
 <div class="text-center">
-    <h1 class="display-4">Envie uma mensagem</h1>
-    <form action="/Home/SaveMessage" method="post">
-        <p>
-            <input type="text" name="Nome" id="name" placeholder="Nome"/>
-        </p>
-        <p>
-            <input type="email" name="Email" id="email" placeholder="E-mail" />
-        </p>
-        <p>
-            <textarea name="Mensagem" rows="5" cols="40" placeholder="Digite sua mensagem."></textarea>
-        </p>
-        <input type="submit" name="enviar" id="enviar" value="Enviar" />
 
-    </form>
+    <h1 class="display-4">Receive messages</h1>
+    <p>Send your personal URL to your contacts and receive their messages on your e-mail!</p>
+    <button asp-action="Index" asp-controller="Login">Start receiving messages</button>
+
 </div>
