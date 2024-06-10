@@ -54,9 +54,10 @@ public class LoginController : Controller
             Response.Headers.Append("Authorization", "Bearer " + token);
             return RedirectToAction("Index", "Dashboard");
 
-        } catch (Exception)
+        } catch (Exception ex)
         {
-            return View("Error");
+            TempData["Error"] = ex.Message;
+            return RedirectToAction("Error", "Home");
         }
     }
 }

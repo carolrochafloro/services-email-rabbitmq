@@ -21,7 +21,7 @@ public class RegisterController : Controller
 
     public ActionResult Index(LoginDTO login = null)
     {
-        var model = login != null ? new RegisterDTO { Email = login.Email } : new RegisterDTO();
+        var model = login != null ? new RegisterDTO { Email = login.Email, Password = login.Password } : new RegisterDTO();
         return View("Register");
     }
 
@@ -56,9 +56,10 @@ public class RegisterController : Controller
             Response.Headers.Append("Authorization", "Bearer " + token);
             return RedirectToAction("Index", "Dashboard"); // redirecionar para página inicial de usuário logado
         }
-        catch
+        catch (Exception ex)
         {
-            return View("Error");
+            TempData["Error"] = ex.Message;
+            return RedirectToAction("Error", "Home");
         }
     }
 
