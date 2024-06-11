@@ -1,7 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
-
-namespace FormContato.Models;
+﻿namespace FormContato.Models;
 
 public class UserModel
 {
@@ -17,7 +14,7 @@ public class UserModel
     public string? Salt { get; set; }
     public bool IsActive { get; set; } = true;
     public DateTime CreatedAt { get; set; } = DateTime.Now;
-    public DateTime LastUpdatedAt { get; set;}
+    public DateTime LastUpdatedAt { get; set; }
     public string? LastUpdatedBy { get; set; }
     public RoleEnum Role { get; set; }
 }

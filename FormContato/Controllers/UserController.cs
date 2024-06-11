@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using FormContato.Context;
+﻿using AutoMapper;
+using FormContato.DTOs;
 using FormContato.Models;
 using FormContato.Repositories;
-using System.Security.Claims;
-using AutoMapper;
-using FormContato.DTOs;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace FormContato.Controllers
 {
@@ -163,9 +157,9 @@ namespace FormContato.Controllers
         {
             var user = _unitOfWork.UserRepository.Get(e => e.Id == id);
 
-            if (user is  null) { return false; }
+            if (user is null) { return false; }
 
-            return true; 
+            return true;
         }
     }
 }

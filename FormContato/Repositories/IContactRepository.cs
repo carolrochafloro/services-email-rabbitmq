@@ -1,5 +1,4 @@
-﻿using FormContato.DTOs;
-using FormContato.Models;
+﻿using FormContato.Models;
 
 namespace FormContato.Repositories;
 

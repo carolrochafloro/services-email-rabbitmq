@@ -1,9 +1,9 @@
-﻿using FormContato.DTOs;
-using FormContato.Repositories;
-using Microsoft.AspNetCore.Mvc;
-using FormContato.Services;
+﻿using AutoMapper;
+using FormContato.DTOs;
 using FormContato.Models;
-using AutoMapper;
+using FormContato.Repositories;
+using FormContato.Services;
+using Microsoft.AspNetCore.Mvc;
 
 namespace FormContato.Controllers;
 public class RegisterController : Controller
@@ -33,11 +33,11 @@ public class RegisterController : Controller
 
             var checkUser = _unitOfWork.UserRepository.Get(u => u.Email == user.Email);
 
-            if (checkUser !=  null)
+            if (checkUser != null)
             {
-                return BadRequest("This user is already registered.");
+                return RedirectToAction("Index", "Login");
             }
- 
+
             _hasher.HashPassword(user.Password);
 
             var newUser = _mapper.Map<UserModel>(user);
@@ -49,11 +49,6 @@ public class RegisterController : Controller
             _unitOfWork.UserRepository.Create(newUser);
             await _unitOfWork.CommitAsync();
 
-            var handler = new JwtHandler();
-
-            var token = handler.GenerateToken(newUser);
-
-            Response.Headers.Append("Authorization", "Bearer " + token);
             return RedirectToAction("Index", "Dashboard"); // redirecionar para página inicial de usuário logado
         }
         catch (Exception ex)

@@ -1,22 +1,17 @@
-﻿using AutoMapper;
-using FormContato.DTOs;
-using FormContato.Repositories;
+﻿using FormContato.DTOs;
 using FormContato.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
 
 namespace FormContato.Controllers;
 public class LoginController : Controller
 
-    // criar service para gerar JWT e refresh token e gerenciar sessão, criar model p/ sessão.
+// criar service para gerar JWT e refresh token e gerenciar sessão, criar model p/ sessão.
 {
-    private readonly IUnitOfWork _unitOfWork;
-    private readonly JwtHandler _jwtHandler;
+    private readonly AuthenticateUserService _authService;
 
-    public LoginController(IUnitOfWork unitOfWork, JwtHandler jwtHandler)
+    public LoginController(AuthenticateUserService authService)
     {
-        _unitOfWork = unitOfWork;
-        _jwtHandler = jwtHandler;
+        _authService = authService;
     }
 
     public IActionResult Index()
@@ -24,47 +19,33 @@ public class LoginController : Controller
         return View("Login");
     }
 
+
     [HttpPost]
-    public IActionResult Login(LoginDTO login)
+    public async Task<IActionResult> Login(LoginDTO login)
     {
-        if (login is null)
-        {
-            return BadRequest("All data must be provided.");
-        }
+
         try
         {
-            var user = _unitOfWork.UserRepository.Get(u => u.Email == login.Email);
+            var result = await _authService.Authenticate(login);
 
-            if (user is null)
+            if (result.Success == false || result.User == null)
             {
-                return RedirectToAction("Index", "Register", login);
-            }
-
-            var hasher = new PasswordHasher();
-
-            bool isValidPassword = hasher.ComparePassword(login.Password, user.Salt, user.Password);
-
-            if (!isValidPassword)
-            {
-                ModelState.AddModelError(string.Empty, "Incorrect user or password.");
+                ModelState.AddModelError(string.Empty, "Failed attempt to login.");
                 return View("Login", login);
             }
 
-            var token = _jwtHandler.GenerateToken(user);
-            string tokenString = _jwtHandler.WriteToken(token);
+            var cookieResult = await _authService.GenerateCookies(result.User, HttpContext);
 
-            if (string.IsNullOrEmpty( tokenString ))
+            if (cookieResult.Success == false)
             {
-                TempData["Error"] = "The authentication failed.";
-                return RedirectToAction("Error", "Home");
+                ModelState.AddModelError(string.Empty, "Failed attempt to login.");
+                return View("Login", login);
             }
 
-            Console.WriteLine("Token gerado: " + token); // Imprime o token gerado
-
-            Response.Cookies.Append("jwt", tokenString, new CookieOptions { HttpOnly = true, Secure = true });
             return RedirectToAction("Index", "Dashboard");
+        }
 
-        } catch (Exception ex)
+        catch (Exception ex)
         {
             TempData["Error"] = ex.Message;
             return RedirectToAction("Error", "Home");

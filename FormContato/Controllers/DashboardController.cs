@@ -1,21 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using FormContato.Context;
+﻿using AutoMapper;
 using FormContato.DTOs;
-using FormContato.Repositories;
-using AutoMapper;
 using FormContato.Models;
+using FormContato.Repositories;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
 namespace FormContato.Controllers
 {
-    [Authorize]
+
     public class DashboardController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -27,6 +21,7 @@ namespace FormContato.Controllers
         }
 
         // GET: Dashboard
+        [Authorize]
         public async Task<IActionResult> Index()
         {
             var tokenFromCookie = Request.Cookies["jwt"];

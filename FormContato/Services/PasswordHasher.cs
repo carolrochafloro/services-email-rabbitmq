@@ -1,11 +1,9 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
-using Microsoft.AspNetCore.Cryptography.KeyDerivation;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace FormContato.Services;
 
-public class PasswordHasher 
+public class PasswordHasher
 {
     // gerar um salt aleatório e passar como chave para HMACSHA25. usar computehash para gerar o hash da senha
     // após ter passado o salt como chave. converter arrays de bytes hash e salt para string e retornar os dois.
@@ -14,7 +12,7 @@ public class PasswordHasher
     public string Salt { get; set; }
     public void HashPassword(string password)
     {
-       
+
         byte[] salt = new byte[128 / 8];
 
         using (var rng = RandomNumberGenerator.Create())
@@ -29,10 +27,10 @@ public class PasswordHasher
 
         Salt = Convert.ToBase64String(salt);
         Password = Convert.ToBase64String(hash);
-        
+
     }
 
-    public bool ComparePassword(string password, string salt, string storedHash)
+    public bool IsValidPassword(string password, string salt, string storedHash)
     {
         byte[] saltBytes = Convert.FromBase64String(salt);
         var hmac = new HMACSHA256(saltBytes);
@@ -42,5 +40,5 @@ public class PasswordHasher
 
         return computedHashString.Equals(storedHash);
     }
-   
+
 }

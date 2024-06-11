@@ -1,5 +1,4 @@
 ﻿using dotenv.net;
-using FormContato.DTOs;
 using FormContato.Models;
 using Newtonsoft.Json;
 using RabbitMQ.Client;

@@ -1,9 +1,4 @@
-using AutoMapper;
-using FormContato.Context;
-using FormContato.DTOs;
 using FormContato.Models;
-using FormContato.Repositories;
-using FormContato.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
