@@ -3,6 +3,7 @@ using FormContato.DTOs;
 using FormContato.Repositories;
 using FormContato.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 
 namespace FormContato.Controllers;
 public class LoginController : Controller
@@ -24,7 +25,7 @@ public class LoginController : Controller
     }
 
     [HttpPost]
-    public ActionResult Login(LoginDTO login)
+    public IActionResult Login(LoginDTO login)
     {
         if (login is null)
         {
@@ -50,8 +51,17 @@ public class LoginController : Controller
             }
 
             var token = _jwtHandler.GenerateToken(user);
+            string tokenString = _jwtHandler.WriteToken(token);
 
-            Response.Headers.Append("Authorization", "Bearer " + token);
+            if (string.IsNullOrEmpty( tokenString ))
+            {
+                TempData["Error"] = "The authentication failed.";
+                return RedirectToAction("Error", "Home");
+            }
+
+            Console.WriteLine("Token gerado: " + token); // Imprime o token gerado
+
+            Response.Cookies.Append("jwt", tokenString, new CookieOptions { HttpOnly = true, Secure = true });
             return RedirectToAction("Index", "Dashboard");
 
         } catch (Exception ex)
