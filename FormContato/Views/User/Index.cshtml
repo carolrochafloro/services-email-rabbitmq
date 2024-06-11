@@ -1,0 +1,32 @@
+﻿@model FormContato.DTOs.ProfileDTO
+
+@{
+    ViewData["Title"] = "Profile";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Profile</h1>
+
+    <tbody>
+
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => modelItem.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => modelItem.LastName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => modelItem.Email)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => modelItem.Password)
+            </td>
+            <td>
+@*                 <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+                <a asp-action="Delete" asp-route-id="@Model.Id">Delete</a> *@
+            </td>
+        </tr>
+
+    </tbody>
+</table>

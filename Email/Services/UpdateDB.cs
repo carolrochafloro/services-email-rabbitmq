@@ -17,7 +17,7 @@ public class UpdateDB
     public async Task UpdateIsSent(bool response, Guid id)
     {
 
-        var user = await _context.Set<ContactViewModel>().FindAsync(id);
+        var user = await _context.Set<ContactModel>().FindAsync(id);
 
         if (user is null)
         {

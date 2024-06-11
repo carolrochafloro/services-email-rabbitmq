@@ -8,7 +8,7 @@ using System.Text;
 
 namespace FormContato.Services;
 
-public class JwtHandler
+public class JwtHandler : JwtSecurityTokenHandler
 {
     public JwtHandler()
     {
@@ -19,8 +19,7 @@ public class JwtHandler
     {
         var claimsIdentity = new ClaimsIdentity();
         claimsIdentity.AddClaim(new Claim(ClaimTypes.Email, user.Email));
-        claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, user.Role.ToString()));
-        claimsIdentity.AddClaim(new Claim(ClaimTypes.Name, user.Id.ToString()));
+        //claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, user.Role.ToString())); //resolver enum/string
 
         return claimsIdentity;
     }

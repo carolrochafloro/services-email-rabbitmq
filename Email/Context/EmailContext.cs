@@ -8,6 +8,6 @@ public class EmailContext : DbContext
     {
 
     }
-    public DbSet<ContactViewModel> Contacts { get; set; }
+    public DbSet<ContactModel> Contacts { get; set; }
 
 }
