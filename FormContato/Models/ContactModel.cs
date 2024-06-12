@@ -10,13 +10,13 @@ public class ContactModel
     public Guid Id { get; set; }
 
     [Required]
-    public string? Nome { get; set; }
+    public string? Name { get; set; }
 
     [Required]
     public string? Email { get; set; }
 
     [Required]
-    public string? Mensagem { get; set; }
+    public string? Message { get; set; }
 
     public bool? IsSent { get; set; }
 

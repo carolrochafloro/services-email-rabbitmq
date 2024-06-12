@@ -17,9 +17,9 @@
 }
 
 <div class="unique-url">
-    <p>Insert e-mail to receive messages.</p>
+    <p>Enter your e-mail to receive messages.</p>
     <div class="input-container">
-        <input type="email" id="email" name="email" placeholder="Enter your email">
+        <input type="email" id="email" name="email" placeholder="E-mail">
         <input type="submit" id="email-btn" value="Ok" class="btn btn-primary" />
     </div>
     <p>Your contact page URL: <a></a></p>
@@ -29,13 +29,16 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Nome)
+                @Html.DisplayNameFor(model => model.Name)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Email)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Mensagem)
+                @Html.DisplayNameFor(model => model.Message)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SentTo)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.IsSent)
@@ -48,13 +51,16 @@
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Nome)
+                    @Html.DisplayFor(modelItem => item.Name)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Email)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Mensagem)
+                    @Html.DisplayFor(modelItem => item.Message)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SentTo)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.IsSent)
