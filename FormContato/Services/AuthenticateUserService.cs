@@ -19,11 +19,6 @@ public class AuthenticateUserService
         _passwordHasher = passwordHasher;
         DotEnv.Load();
     }
-
-    // conferir se existe, se a senha está correta, se está ativo, retornar result. ok
-    // se result, gerar cookie ok
-    // um método p/ logout 
-
     public async Task<Result> Authenticate(LoginDTO login)
     {
 

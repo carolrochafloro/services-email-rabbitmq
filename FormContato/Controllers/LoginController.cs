@@ -1,5 +1,7 @@
 ﻿using FormContato.DTOs;
 using FormContato.Services;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FormContato.Controllers;
@@ -55,5 +57,13 @@ public class LoginController : Controller
             TempData["Error"] = ex.Message;
             return RedirectToAction("Error", "Home");
         }
+    }
+
+    public async Task<IActionResult> Logout()
+    {
+
+        await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        return RedirectToAction("Index", "Home");
+
     }
 }
