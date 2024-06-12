@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Drawing;
 using System.Text.Json.Serialization;
 
 namespace FormContato.Models;
@@ -21,6 +22,9 @@ public class ContactModel
 
     [ForeignKey(nameof(UserModel.Id))]
     public Guid UserId { get; set; }
+
+    [Required]
+    public string SentTo { get; set; }
 
     [JsonIgnore]
     public UserModel User { get; set; }
