@@ -24,11 +24,24 @@ namespace FormContato.Controllers
         [Authorize]
         public async Task<IActionResult> Index()
         {
-            var tokenFromCookie = Request.Cookies["jwt"];
-            Console.WriteLine("Token recebido: " + tokenFromCookie);
-            string userEmail = User.FindFirst(ClaimTypes.Email)?.Value;
-            Console.WriteLine(userEmail);
-            var contacts = await _unitOfWork.ContactRepository.GetAllAsync();
+            // pegar id do user do cookie, mostrar mensagens com userId == id
+            
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier);
+
+            if (userId is null)
+            {
+                TempData["Error"] = "Unable to obtain user ID. Please ensure you're logged in.";
+                return RedirectToAction("Error", "Home");
+            }
+            var userGuid = Guid.Parse(userId.Value);
+            
+            var contacts =  _unitOfWork.ContactRepository.Get(c => c.UserId == userGuid);
+
+            if (contacts is  null)
+            {
+                ViewBag.Message = "No contacts found.";
+            }
+
             var contactDTOs = _mapper.Map<IEnumerable<ContactDTO>>(contacts);
             return View(contactDTOs);
         }
@@ -54,75 +67,6 @@ namespace FormContato.Controllers
         public IActionResult Create()
         {
             return View();
-        }
-
-        // POST: Dashboard/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Nome,Email,Mensagem")] ContactDTO contactDTO)
-        {
-            if (ModelState.IsValid)
-            {
-                var newContact = _mapper.Map<ContactModel>(contactDTO);
-                _unitOfWork.ContactRepository.Create(newContact);
-                await _unitOfWork.CommitAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(contactDTO);
-        }
-
-        // GET: Dashboard/Edit/5
-        public async Task<IActionResult> Edit(Guid? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var contactDTO = _unitOfWork.ContactRepository.Get(c => c.Id == id); // tornar async
-            if (contactDTO == null)
-            {
-                return NotFound();
-            }
-            return View(contactDTO);
-        }
-
-        // POST: Dashboard/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Nome,Email,Mensagem")] ContactDTO contactDTO)
-        {
-            if (id != contactDTO.Id)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    var contact = _mapper.Map<ContactModel>(contactDTO);
-                    _unitOfWork.ContactRepository.UpdateAsync(contact);
-                    await _unitOfWork.CommitAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ContactDTOExists(contactDTO.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(contactDTO);
         }
 
         // GET: Dashboard/Delete/5
