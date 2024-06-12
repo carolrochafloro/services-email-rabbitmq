@@ -5,9 +5,25 @@
     Layout = "~/Views/Dashboard/DashboardLayout.cshtml";
 }
 
-<h1>Your dashboard</h1>
+<h1>@User.Identity.Name's dashboard</h1>
 
 @* inluir logout no layout *@
+
+@if (!String.IsNullOrEmpty(ViewBag.Message))
+{
+    <div class="alert alert-info">
+        @ViewBag.Message
+    </div>
+}
+
+<div class="unique-url">
+    <p>Insert e-mail to receive messages.</p>
+    <div class="input-container">
+        <input type="email" id="email" name="email" placeholder="Enter your email">
+        <input type="submit" id="email-btn" value="Ok" class="btn btn-primary" />
+    </div>
+    <p>Your contact page URL: <a></a></p>
+</div>
 
 <table class="table">
     <thead>
@@ -44,7 +60,6 @@
                     @Html.DisplayFor(modelItem => item.IsSent)
                 </td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                     <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
                     <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
                 </td>

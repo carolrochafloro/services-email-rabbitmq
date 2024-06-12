@@ -1,26 +1,70 @@
 html {
-  font-size: 14px;
+    font-size: 14px;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    html {
+        font-size: 16px;
+    }
 }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
 html {
-  position: relative;
-  min-height: 100%;
+    position: relative;
+    min-height: 100%;
 }
 
 body {
-  margin-bottom: 60px;
+    margin-bottom: 60px;
 }
 
 .btn-primary {
     margin-top: 20px;
 }
+
+.unique-url {
+    margin: 0;
+    padding: 20px;
+    background-color: #a7d1fe;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-content: center;
+    gap: 10px;
+}
+
+    .unique-url p {
+        grid-column: 1 / -1;
+        margin: 0;
+    }
+
+.input-container {
+    display: flex;
+    justify-content: flex-start;
+    grid-column: 1;
+}
+
+#email-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    height: 30px;
+    font-size: small;
+    font-weight: bold;
+    margin: 0;
+    margin-left: 5px;
+}
+
+#logout {
+    color: #ff0000 !important;
+    border: 1px solid #ff0000;
+    border-radius: 2px;
+    margin-left: auto !important;
+}
+
+    #logout:hover {
+        box-shadow: #cdcccc 1px 1px 1px 1px;
+    }

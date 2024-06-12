@@ -7,40 +7,6 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//builder.Services
-//    .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-//    .AddCookie(options =>
-//    {
-//        options.Cookie.HttpOnly = true;
-//        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-//        options.Cookie.SameSite = SameSiteMode.Strict;
-//        options.LoginPath = "/Dashboard/Index";
-//        options.Events = new CookieAuthenticationEvents
-//        {
-//            OnValidatePrincipal = async context =>
-//            {
-//                var tokenHandler = new JwtSecurityTokenHandler();
-//                var key = Encoding.ASCII.GetBytes(Environment.GetEnvironmentVariable("JWT_PRIVATE_KEY"));
-
-//                try
-//                {
-//                    tokenHandler.ValidateToken(context.Request.Cookies["jwt"], new TokenValidationParameters
-//                    {
-//                        ValidateIssuerSigningKey = true,
-//                        IssuerSigningKey = new SymmetricSecurityKey(key),
-//                        ValidateIssuer = false,
-//                        ValidateAudience = false
-//                    }, out SecurityToken validatedToken);
-//                }
-//                catch
-//                {
-//                    context.RejectPrincipal();
-//                    await context.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-//                }
-//            },
-//        };
-//    });
-
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options =>
 {
     options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
@@ -77,7 +43,6 @@ builder.Services.AddScoped<AuthenticateUserService>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
