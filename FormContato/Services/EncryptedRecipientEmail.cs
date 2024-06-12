@@ -8,7 +8,7 @@ public class EncryptedRecipientEmail
     public string DecryptKey { get; set; }
     public string DecryptIV { get; set; }
 
-    public async Task<EncryptedRecipientEmail> GenUrl(string email)
+    public async Task<EncryptedRecipientEmail> Encrypt(string email)
     {
 
         byte[] encrypted;
@@ -37,11 +37,12 @@ public class EncryptedRecipientEmail
                 }
             }
 
-            string encryptedBase64 = Convert.ToBase64String(encrypted);
+            string encryptedBase64UrlFriendly = Convert.ToBase64String(encrypted).TrimEnd('=').Replace('+', '-').Replace('/', '_');
+
 
             return new EncryptedRecipientEmail
             {
-                EncryptedEmail = encryptedBase64,
+                EncryptedEmail = encryptedBase64UrlFriendly,
                 DecryptKey = DecryptKey,
                 DecryptIV = DecryptIV
             };
@@ -49,4 +50,17 @@ public class EncryptedRecipientEmail
         }
 
     }
+
+    /* decrypt:
+    public static byte[] FromBase64UrlString(string input)
+    {
+        input = input.Replace('-', '+').Replace('_', '/');
+
+        while (input.Length % 4 != 0)
+        {
+            input += '=';
+        }
+
+        return Convert.FromBase64String(input);
+    }*/
 }
