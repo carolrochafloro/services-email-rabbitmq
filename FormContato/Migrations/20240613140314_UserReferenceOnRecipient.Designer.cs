@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FormContato.Migrations
 {
     [DbContext(typeof(FCDbContext))]
-    [Migration("20240612190216_CreatedRecipientTable")]
-    partial class CreatedRecipientTable
+    [Migration("20240613140314_UserReferenceOnRecipient")]
+    partial class UserReferenceOnRecipient
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -66,6 +66,9 @@ namespace FormContato.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid>("AppUserId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("RecipientEmail")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -74,7 +77,12 @@ namespace FormContato.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("AppUserId");
 
                     b.ToTable("Recipients");
                 });
@@ -129,6 +137,17 @@ namespace FormContato.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("FormContato.Models.RecipientModel", b =>
+                {
+                    b.HasOne("FormContato.Models.UserModel", "AppUser")
+                        .WithMany()
+                        .HasForeignKey("AppUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AppUser");
                 });
 #pragma warning restore 612, 618
         }
