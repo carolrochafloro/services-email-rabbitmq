@@ -7,6 +7,7 @@ public class UnitOfWork : IUnitOfWork
 {
     private IContactRepository _contactRepository;
     private IUserRepository _userRepository;
+    public IRecipientRepository _recipientRepository;
     public FCDbContext _context;
 
     public UnitOfWork(FCDbContext context)
@@ -27,6 +28,14 @@ public class UnitOfWork : IUnitOfWork
         get
         {
             return _userRepository = _userRepository ?? new UserRepository(_context);
+        }
+    }
+
+    public IRecipientRepository RecipientRepository
+    {
+        get
+        {
+            return _recipientRepository = _recipientRepository ?? new RecipientRepository(_context);
         }
     }
 

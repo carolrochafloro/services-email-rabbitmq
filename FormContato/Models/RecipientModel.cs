@@ -1,4 +1,6 @@
-﻿namespace FormContato.Models;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace FormContato.Models;
 
 // criar repository, salvar email e final da url no banco de dados
 // criar verificação, caso o email já exista retornar a url do banco
@@ -8,6 +10,9 @@
 public class RecipientModel
 {
     public Guid Id { get; set; }
+
+    [Required]
     public string RecipientEmail { get; set; }
+    [Required]
     public string Url { get; set;}
 }
