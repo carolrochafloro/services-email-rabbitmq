@@ -11,8 +11,6 @@ Já no desenvolvimento do projeto FormContact consegui executar melhor a separa�
 
 ## Backlog
 - Testes;
-- Tela de cadastro;
-- Tela de login;
-- Tela de visualização de mensagens;
+- Alterar worker para enviar e-mail de acordo com o endereço enviado pelo user;
 - Docker-compose: SQL Server, RabbitMQ, projeto Email e projeto FormContato;
 - Paginação de resultados.
