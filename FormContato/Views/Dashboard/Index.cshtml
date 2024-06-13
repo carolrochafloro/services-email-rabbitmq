@@ -18,11 +18,13 @@
 
 <div class="unique-url">
     <p>Enter your e-mail to receive messages.</p>
-    <div class="input-container">
-        <input type="email" id="email" name="email" placeholder="E-mail">
-        <input type="submit" id="email-btn" value="Ok" class="btn btn-primary" />
-    </div>
-    <p>Your contact page URL: <a></a></p>
+    <form action="/Dashboard/UrlEmail" method="post">
+        <div class="input-container">
+            <input type="email" id="email" name="email" placeholder="E-mail">
+            <input type="submit" id="email-btn" value="Ok" class="btn btn-primary" />
+        </div>
+    </form>
+    <p>Your contact page URL: <a href="@ViewBag.Url" id="urlLink"></a></p>
 </div>
 
 <table class="table">
@@ -74,3 +76,22 @@
     </tbody>
 </table>
 
+<script>
+    document.getElementById('email-btn').addEventListener('click', function(event) {
+        event.preventDefault();
+        var email = document.getElementById('email').value;
+        fetch('/Dashboard/UrlEmail', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: 'email=' + encodeURIComponent(email),
+        })
+        .then(response => response.text())
+        .then(url => {
+            var link = document.getElementById('urlLink');
+            link.href = url;
+            link.textContent = url;
+        });
+    });
+</script>

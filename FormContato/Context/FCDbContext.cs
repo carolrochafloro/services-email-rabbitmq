@@ -10,6 +10,6 @@ public class FCDbContext : DbContext
 
     }
     public DbSet<ContactModel> Contacts { get; set; }
-    public DbSet<LogModel> Logs { get; set; }
     public DbSet<UserModel> Users { get; set; }
+    public DbSet<RecipientModel> Recipients { get; set; }
 }

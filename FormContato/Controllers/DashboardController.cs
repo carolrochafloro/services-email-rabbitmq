@@ -2,6 +2,7 @@
 using FormContato.DTOs;
 using FormContato.Models;
 using FormContato.Repositories;
+using FormContato.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -111,5 +112,30 @@ namespace FormContato.Controllers
             }
             return true;
         }
+
+        [HttpPost]
+        public async Task<IActionResult> UrlEmail(string email)
+        {
+            // receber e-mail e gerar url - service recebendo e-mail como param
+            //if (email is null)
+            //{
+            //    // return warning na view, dentro da div
+            //}
+
+            // chamar service
+
+            var encrypter = new EncryptedRecipientEmail();
+             var result = await encrypter.Encrypt(email);
+
+            string baseUrl = Environment.GetEnvironmentVariable("BASE_URL");
+            string url = $"{baseUrl}/{result.EncryptedEmail}";
+
+            // adicionar login a <a> na view
+
+            ViewBag.Url = url;
+
+            return Content(url);
+        }
+
     }
 }
