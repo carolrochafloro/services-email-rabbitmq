@@ -63,9 +63,6 @@ namespace FormContato.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("AppUserId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("RecipientEmail")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -79,7 +76,7 @@ namespace FormContato.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AppUserId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Recipients");
                 });
@@ -138,13 +135,13 @@ namespace FormContato.Migrations
 
             modelBuilder.Entity("FormContato.Models.RecipientModel", b =>
                 {
-                    b.HasOne("FormContato.Models.UserModel", "AppUser")
+                    b.HasOne("FormContato.Models.UserModel", "User")
                         .WithMany()
-                        .HasForeignKey("AppUserId")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("AppUser");
+                    b.Navigation("User");
                 });
 #pragma warning restore 612, 618
         }

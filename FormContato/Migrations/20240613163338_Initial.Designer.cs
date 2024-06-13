@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FormContato.Migrations
 {
     [DbContext(typeof(FCDbContext))]
-    [Migration("20240613140314_UserReferenceOnRecipient")]
-    partial class UserReferenceOnRecipient
+    [Migration("20240613163338_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

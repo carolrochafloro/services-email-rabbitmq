@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FormContato.Migrations
 {
     [DbContext(typeof(FCDbContext))]
-    [Migration("20240612182520_RenameContacts2")]
-    partial class RenameContacts2
+    [Migration("20240613165941_Fix")]
+    partial class Fix
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -40,13 +40,11 @@ namespace FormContato.Migrations
 
                     b.Property<string>("Message")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("Message");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("Name");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SentTo")
                         .IsRequired()
@@ -62,30 +60,28 @@ namespace FormContato.Migrations
                     b.ToTable("Contacts");
                 });
 
-            modelBuilder.Entity("FormContato.Models.LogModel", b =>
+            modelBuilder.Entity("FormContato.Models.RecipientModel", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("LogDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("LogLevel")
+                    b.Property<string>("RecipientEmail")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("LogType")
+                    b.Property<string>("Url")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Source")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("StackTrace")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Logs");
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Recipients");
                 });
 
             modelBuilder.Entity("FormContato.Models.UserModel", b =>
@@ -130,6 +126,17 @@ namespace FormContato.Migrations
                 });
 
             modelBuilder.Entity("FormContato.Models.ContactModel", b =>
+                {
+                    b.HasOne("FormContato.Models.UserModel", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("FormContato.Models.RecipientModel", b =>
                 {
                     b.HasOne("FormContato.Models.UserModel", "User")
                         .WithMany()
