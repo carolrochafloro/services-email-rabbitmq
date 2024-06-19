@@ -1,4 +1,5 @@
 ﻿using Email.Context;
+using FormContato.DTOs;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Collections.Concurrent;
@@ -75,9 +76,10 @@ public class Consumer
 
         if (Messages.TryDequeue(out var message))
         {
-            var messageObject = JsonSerializer.Deserialize<Dictionary<string, string>>(message);
+            var messageObject = JsonSerializer.Deserialize<MessageDTO>(message);
+            var contact = messageObject.Contact;
             bool isEmailSent = await _sendEmail.Send(messageObject);
-            Guid id = Guid.Parse(messageObject["Id"]);
+            Guid id = contact.Id;
             await _updateDB.UpdateIsSent(isEmailSent, id);
         }
 

@@ -1,4 +1,5 @@
 ﻿using dotenv.net;
+using FormContato.DTOs;
 using SendGrid;
 using SendGrid.Helpers.Mail;
 
@@ -13,23 +14,26 @@ public class SendEmail
     }
 
 
-    public async Task<bool> Send(Dictionary<string, string> messageObject)
+    public async Task<bool> Send(MessageDTO messageObject)
     {
         if (messageObject == null)
         {
             throw new ArgumentNullException("Message not found");
         }
 
+        var recipient = messageObject.Recipient;
+        var contact = messageObject.Contact;
+
         string currentDirectory = Directory.GetCurrentDirectory();
         string htmlFilePath = Path.Combine(currentDirectory, "Templates", "Email.html");
 
         var client = new SendGridClient(Environment.GetEnvironmentVariable("SENDGRID_API_KEY"));
-        var from = new EmailAddress(Environment.GetEnvironmentVariable("FROM_EMAIL"), "Carol Rocha");
+        var from = new EmailAddress(Environment.GetEnvironmentVariable("FROM_EMAIL"), contact.Name);
         var subject = "Check your messages!";
-        var to = new EmailAddress(Environment.GetEnvironmentVariable("TO_EMAIL"));
-        var plainText = messageObject["Nome"] + messageObject["Email"] + messageObject["Mensagem"];
+        var to = new EmailAddress(recipient.RecipientEmail);
+        var plainText = contact.Name + contact.Email + contact.Message;
         var htmlTemplate = await File.ReadAllTextAsync(htmlFilePath);
-        var html = string.Format(htmlTemplate, messageObject["Nome"], messageObject["Email"], messageObject["Mensagem"]);
+        var html = string.Format(htmlTemplate, contact.Name, contact.Email, contact.Message);
         var msg = MailHelper.CreateSingleEmail(from, to, subject, plainText, html);
 
         var response = await client.SendEmailAsync(msg);
