@@ -4,6 +4,7 @@ using FormContato.Models;
 using FormContato.Repositories;
 using FormContato.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
 
 namespace FormContato.Controllers;
 public class RegisterController : Controller
@@ -11,14 +12,16 @@ public class RegisterController : Controller
     private readonly IMapper _mapper;
     private readonly IUnitOfWork _unitOfWork;
     private readonly PasswordHasher _hasher;
+    private readonly AuthenticateUserService _authService;
 
-    public RegisterController(IMapper mapper, IUnitOfWork unitOfWork, PasswordHasher hasher)
+    public RegisterController(IMapper mapper, IUnitOfWork unitOfWork, PasswordHasher hasher, AuthenticateUserService authService)
     {
         _mapper = mapper;
         _unitOfWork = unitOfWork;
         _hasher = hasher;
+        _authService = authService;
     }
-
+    // removendo var model para ver se corrijo o bug
     public ActionResult Index(LoginDTO login = null)
     {
         var model = login != null ? new RegisterDTO { Email = login.Email, Password = login.Password } : new RegisterDTO();
@@ -48,6 +51,28 @@ public class RegisterController : Controller
 
             _unitOfWork.UserRepository.Create(newUser);
             await _unitOfWork.CommitAsync();
+
+            var newUserLogin = new LoginDTO
+            {
+                Email = user.Email,
+                Password = user.Password,
+            };
+
+            var result = await _authService.Authenticate(newUserLogin);
+
+            if (result.Success == false || result.User == null)
+            {
+                ModelState.AddModelError(string.Empty, "Failed attempt to login.");
+                return View("Login", newUserLogin);
+            }
+
+            var cookieResult = await _authService.GenerateCookies(result.User, HttpContext);
+
+            if (cookieResult.Success == false)
+            {
+                ModelState.AddModelError(string.Empty, "Failed attempt to login.");
+                return View("Login", newUserLogin);
+            }
 
             return RedirectToAction("Index", "Dashboard"); // redirecionar para página inicial de usuário logado
         }
