@@ -36,7 +36,7 @@ namespace FormContato.Controllers
             }
             var userGuid = Guid.Parse(userId.Value);
 
-            var contacts = _unitOfWork.ContactRepository.Get(c => c.UserId == userGuid);
+            IEnumerable<ContactModel> contacts = await _unitOfWork.ContactRepository.GetById(c => c.UserId == userGuid);
 
             if (contacts is null)
             {
@@ -64,11 +64,6 @@ namespace FormContato.Controllers
             return View(contactDTO);
         }
 
-        // GET: Dashboard/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
 
         // GET: Dashboard/Delete/5
         public async Task<IActionResult> Delete(Guid? id)

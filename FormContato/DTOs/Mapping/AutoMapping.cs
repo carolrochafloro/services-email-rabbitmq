@@ -11,5 +11,6 @@ public class AutoMapping : Profile
         CreateMap<UserModel, LoginDTO>().ReverseMap();
         CreateMap<ContactDTO, ContactModel>().ReverseMap();
         CreateMap<ProfileDTO, UserModel>().ReverseMap();
+
     }
 }
