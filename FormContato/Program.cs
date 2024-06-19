@@ -40,6 +40,7 @@ builder.Services.AddScoped<IContactRepository, ContactRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<AuthenticateUserService>();
+builder.Services.AddScoped<Producer>();
 
 var app = builder.Build();
 

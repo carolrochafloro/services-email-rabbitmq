@@ -4,6 +4,8 @@ using FormContato.Models;
 using FormContato.Repositories;
 using FormContato.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
+using System.Security.Claims;
 
 namespace FormContato.Controllers;
 [Route("SendMessage/[action]/{encryptedEmail}")]
@@ -20,13 +22,15 @@ public class SendMessageController : Controller
         _producer = producer;
     }
 
-    public IActionResult Index()
+    [HttpGet]
+    public IActionResult Index([FromRoute] string encryptedEmail)
     {
+        ViewBag.EncryptedEmail = encryptedEmail;
         return View("SendMessage");
     }
 
     [HttpPost]
-    public async Task<IActionResult> SaveMessage([FromBody] ContactDTO contact, [FromRoute] string encryptedEmail)
+    public async Task<IActionResult> SaveMessage([FromForm] ContactDTO contact, [FromRoute] string encryptedEmail)
     {
         if (contact is null)
         {
@@ -34,6 +38,17 @@ public class SendMessageController : Controller
         }
 
         var newContact = _mapper.Map<ContactModel>(contact);
+
+        newContact.SentTo = encryptedEmail;
+        var userId = _unitOfWork.RecipientRepository.Get(r => r.Url == encryptedEmail);
+
+        if (userId is null)
+        {
+            ModelState.AddModelError(string.Empty, "Failed attempt to login.");
+            return View("Error");
+        }
+
+        newContact.UserId = userId.UserId;
 
         try
         {

@@ -18,7 +18,7 @@ public class ContactModel
     [Required]
     public string? Message { get; set; }
 
-    public bool? IsSent { get; set; }
+    public bool? IsSent { get; set; } = false;
 
     [ForeignKey(nameof(UserModel.Id))]
     public Guid UserId { get; set; }

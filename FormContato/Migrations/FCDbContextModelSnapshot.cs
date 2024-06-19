@@ -54,7 +54,7 @@ namespace FormContato.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Contacts");
+                    b.ToTable("Contacts", (string)null);
                 });
 
             modelBuilder.Entity("FormContato.Models.RecipientModel", b =>
@@ -78,7 +78,7 @@ namespace FormContato.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Recipients");
+                    b.ToTable("Recipients", (string)null);
                 });
 
             modelBuilder.Entity("FormContato.Models.UserModel", b =>
@@ -119,7 +119,7 @@ namespace FormContato.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("FormContato.Models.ContactModel", b =>

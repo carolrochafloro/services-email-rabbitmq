@@ -4,7 +4,8 @@
 
 <div class="text-center">
     <h1 class="display-4">Envie uma Message</h1>
-    <form action="/Home/SaveMessage" method="post">
+    <form action="/SendMessage/SaveMessage/@ViewBag.EncryptedEmail" method="post">
+        <input type="hidden" name="encryptedEmail" value="{encryptedEmail}" />
         <p>
             <input type="text" name="Name" id="name" placeholder="Name" />
         </p>
@@ -12,9 +13,9 @@
             <input type="email" name="Email" id="email" placeholder="E-mail" />
         </p>
         <p>
-            <textarea name="Message" rows="5" cols="40" placeholder="Digite sua Message."></textarea>
+            <textarea name="Message" rows="5" cols="40" placeholder="Digite sua mensagem."></textarea>
         </p>
-        <input type="submit" name="enviar" id="enviar" value="Enviar" />
+        <input type="submit" name="send" id="send" value="Send" />
 
     </form>
 </div>

@@ -137,14 +137,14 @@ namespace FormContato.Controllers
                 _unitOfWork.RecipientRepository.Create(recipientObject);
                 await _unitOfWork.CommitAsync();
 
-                url = $"{baseUrl}/{result.EncryptedEmail}";
+                url = $"https://{baseUrl}/SendMessage/Index/{result.EncryptedEmail}";
 
                 ViewBag.Url = url;
 
                 return Content(url);
             }
 
-            url = $"{baseUrl}/{recipient.Url}";
+            url = $"https://{baseUrl}/SendMessage/Index/{recipient.Url}";
 
             ViewBag.Url = url;
 
