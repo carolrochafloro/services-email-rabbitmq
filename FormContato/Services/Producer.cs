@@ -1,4 +1,5 @@
 ﻿using dotenv.net;
+using FormContato.DTOs;
 using FormContato.Models;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
@@ -23,7 +24,7 @@ public class Producer : IDisposable
         channel = connection.CreateModel();
     }
 
-    public void Produce(ContactModel contact)
+    public void Produce(ContactModel contact, RecipientModel recipient)
     {
 
         channel.QueueDeclare(
@@ -34,7 +35,13 @@ public class Producer : IDisposable
             arguments: null
             );
 
-        string message = JsonConvert.SerializeObject(contact);
+        var newMessage = new MessageDTO
+        {
+            Contact = contact,
+            Recipient = recipient,
+        };
+
+        string message = JsonConvert.SerializeObject(newMessage);
         var body = Encoding.UTF8.GetBytes(message);
 
         channel.BasicPublish(exchange: "",

@@ -21,7 +21,8 @@ public class RecipientModel
 
     [ForeignKey(nameof(UserModel.Id))]
     public Guid UserId { get; set; }
+
     [JsonIgnore]
-    public UserModel AppUser { get; set; }
+    public UserModel User { get; set; }
 
 }
