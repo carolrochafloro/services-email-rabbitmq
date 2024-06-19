@@ -6,15 +6,18 @@ using FormContato.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FormContato.Controllers;
+[Route("SendMessage/[action]/{encryptedEmail}")]
 public class SendMessageController : Controller
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
+    private readonly Producer _producer;
 
-    public SendMessageController(IUnitOfWork unitOfWork, IMapper mapper)
+    public SendMessageController(IUnitOfWork unitOfWork, IMapper mapper, Producer producer)
     {
         _unitOfWork = unitOfWork;
         _mapper = mapper;
+        _producer = producer;
     }
 
     public IActionResult Index()
@@ -22,7 +25,8 @@ public class SendMessageController : Controller
         return View("SendMessage");
     }
 
-    public async Task<IActionResult> SaveMessage(ContactDTO contact)
+    [HttpPost]
+    public async Task<IActionResult> SaveMessage([FromBody] ContactDTO contact, [FromRoute] string encryptedEmail)
     {
         if (contact is null)
         {
@@ -33,13 +37,20 @@ public class SendMessageController : Controller
 
         try
         {
+            var recipient = _unitOfWork.RecipientRepository.Get(r => r.Url == encryptedEmail);
+
+            if (recipient is null)
+            {
+                return View("Error");
+            }
 
             _unitOfWork.ContactRepository.Create(newContact);
             await _unitOfWork.CommitAsync();
-            var producer = new Producer();
-            producer.Produce(newContact);
+         
+            _producer.Produce(newContact, recipient);
             return View("Success");
         }
+
         catch (Exception ex)
         {
             TempData["Error"] = ex.Message;
