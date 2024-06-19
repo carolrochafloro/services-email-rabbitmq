@@ -26,7 +26,7 @@ namespace FormContato.Controllers
         public async Task<IActionResult> Index()
         {
             // pegar id do user do cookie, mostrar mensagens com userId == id
-            
+
             var userId = User.FindFirst(ClaimTypes.NameIdentifier);
 
             if (userId is null)
@@ -35,10 +35,10 @@ namespace FormContato.Controllers
                 return RedirectToAction("Error", "Home");
             }
             var userGuid = Guid.Parse(userId.Value);
-            
-            var contacts =  _unitOfWork.ContactRepository.Get(c => c.UserId == userGuid);
 
-            if (contacts is  null)
+            var contacts = _unitOfWork.ContactRepository.Get(c => c.UserId == userGuid);
+
+            if (contacts is null)
             {
                 ViewBag.Message = "No contacts found.";
             }
@@ -116,25 +116,40 @@ namespace FormContato.Controllers
         [HttpPost]
         public async Task<IActionResult> UrlEmail(string email)
         {
-            // receber e-mail e gerar url - service recebendo e-mail como param
-            //if (email is null)
-            //{
-            //    // return warning na view, dentro da div
-            //}
+            string? baseUrl = Environment.GetEnvironmentVariable("BASE_URL");
+            string url;
 
-            // chamar service
+            var recipient = _unitOfWork.RecipientRepository.Get(r => r.RecipientEmail == email);
+            var user = User.FindFirst(ClaimTypes.NameIdentifier);
+            var userId = Guid.Parse(user.Value);
 
-            var encrypter = new EncryptedRecipientEmail();
-             var result = await encrypter.Encrypt(email);
+            if (recipient == null)
+            {
+                var encrypter = new EncryptedRecipientEmail();
+                var result = await encrypter.Encrypt(email);
+                var recipientObject = new RecipientModel
+                {
+                    RecipientEmail = email,
+                    Url = result.EncryptedEmail,
+                    UserId = userId,
+                };
 
-            string baseUrl = Environment.GetEnvironmentVariable("BASE_URL");
-            string url = $"{baseUrl}/{result.EncryptedEmail}";
+                _unitOfWork.RecipientRepository.Create(recipientObject);
+                await _unitOfWork.CommitAsync();
 
-            // adicionar login a <a> na view
+                url = $"{baseUrl}/{result.EncryptedEmail}";
+
+                ViewBag.Url = url;
+
+                return Content(url);
+            }
+
+            url = $"{baseUrl}/{recipient.Url}";
 
             ViewBag.Url = url;
 
             return Content(url);
+
         }
 
     }
