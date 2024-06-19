@@ -8,7 +8,7 @@ public class EncryptedRecipientEmail
     public string DecryptKey { get; set; }
     public string DecryptIV { get; set; }
 
-    public async Task<EncryptedRecipientEmail> Encrypt(string email)
+    public async Task<EncryptedRecipientEmail> Encrypt(string email, string userId)
     {
 
         byte[] encrypted;
@@ -30,7 +30,7 @@ public class EncryptedRecipientEmail
                 {
                     using (StreamWriter swEncrypt = new StreamWriter(csEncrypt))
                     {
-                        swEncrypt.Write(email);
+                        swEncrypt.Write(email + userId);
                     }
 
                     encrypted = msEncrypt.ToArray();
