@@ -118,10 +118,10 @@ namespace FormContato.Controllers
             var user = User.FindFirst(ClaimTypes.NameIdentifier);
             var userId = Guid.Parse(user.Value);
 
-            if (recipient == null)
+            if (recipient == null || recipient.UserId != userId)
             {
                 var encrypter = new EncryptedRecipientEmail();
-                var result = await encrypter.Encrypt(email);
+                var result = await encrypter.Encrypt(email, userId.ToString());
                 var recipientObject = new RecipientModel
                 {
                     RecipientEmail = email,
