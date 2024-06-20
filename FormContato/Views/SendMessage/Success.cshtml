@@ -5,4 +5,5 @@
 <div class="text-center">
     <h1 class="display-4">Envie uma mensagem</h1>
     <p>Sua mensagem foi enviada!</p>
+    <a asp-action="Index" asp-controller="SendMessage" asp-route-encryptedEmail="@ViewBag.EncryptedEmail" class="btn btn-primary">Send a new message</a>
 </div>

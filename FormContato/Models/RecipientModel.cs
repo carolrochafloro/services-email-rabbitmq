@@ -13,7 +13,7 @@ public class RecipientModel
 
     [Required]
     public string Url { get; set;}
-    public string ShortUrl { get; set;}
+    public string? ShortUrl { get; set; } = null;
 
     [Required]
     [ForeignKey(nameof(UserModel.Id))]

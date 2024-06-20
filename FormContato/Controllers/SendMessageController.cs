@@ -40,7 +40,8 @@ public class SendMessageController : Controller
         var newContact = _mapper.Map<ContactModel>(contact);
 
         newContact.SentTo = encryptedEmail;
-        var userId = _unitOfWork.RecipientRepository.Get(r => r.Url == encryptedEmail);
+        string baseUrl = $"https://{Environment.GetEnvironmentVariable("BASE_URL")}/SendMessage/Index/{encryptedEmail}";
+        var userId = _unitOfWork.RecipientRepository.Get(r => r.Url == baseUrl);
 
         if (userId is null)
         {
@@ -52,7 +53,7 @@ public class SendMessageController : Controller
 
         try
         {
-            var recipient = _unitOfWork.RecipientRepository.Get(r => r.Url == encryptedEmail);
+            var recipient = _unitOfWork.RecipientRepository.Get(r => r.Url == baseUrl);
 
             if (recipient is null)
             {
@@ -63,6 +64,7 @@ public class SendMessageController : Controller
             await _unitOfWork.CommitAsync();
          
             _producer.Produce(newContact, recipient);
+            ViewBag.EncryptedEmail = encryptedEmail;
             return View("Success");
         }
 

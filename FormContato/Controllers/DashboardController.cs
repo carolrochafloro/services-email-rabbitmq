@@ -131,13 +131,12 @@ namespace FormContato.Controllers
                 {
                     RecipientEmail = email,
                     Url = url,
-                    ShortUrl = bitlink,
                     UserId = userId,
                 };
 
-                if (bitlink == Environment.GetEnvironmentVariable("BITLY_FAIL_RESPONSE"))
+                if (bitlink != Environment.GetEnvironmentVariable("BITLY_FAIL_RESPONSE"))
                 {
-                    recipientObject.ShortUrl = null;               
+                    recipientObject.ShortUrl = bitlink;               
                 }
 
                 _unitOfWork.RecipientRepository.Create(recipientObject);
