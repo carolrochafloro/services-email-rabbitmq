@@ -10,7 +10,7 @@ using System.Security.Claims;
 
 namespace FormContato.Controllers
 {
-
+    [Authorize]
     public class DashboardController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -22,7 +22,7 @@ namespace FormContato.Controllers
         }
 
         // GET: Dashboard
-        [Authorize]
+
         public async Task<IActionResult> Index()
         {
             // pegar id do user do cookie, mostrar mensagens com userId == id
@@ -48,64 +48,65 @@ namespace FormContato.Controllers
         }
 
         // GET: Dashboard/Details/5
+
         public async Task<IActionResult> Details(Guid? id)
         {
+            // mostrar mensagem completa
+
             if (id == null)
             {
-                return NotFound();
+                ModelState.AddModelError("", "Contact ID must be informed.");
+                return View();
             }
 
-            var contactDTO = _unitOfWork.ContactRepository.Get(m => m.Id == id);
-            if (contactDTO == null)
-            {
-                return NotFound();
-            }
-
-            return View(contactDTO);
-        }
-
-
-        // GET: Dashboard/Delete/5
-        public async Task<IActionResult> Delete(Guid? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var contactDTO = _unitOfWork.ContactRepository.Get(m => m.Id == id); // tornar async
-            if (contactDTO == null)
-            {
-                return NotFound();
-            }
-
-            return View(contactDTO);
-        }
-
-        // POST: Dashboard/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(Guid id)
-        {
-            var contactDTO = _unitOfWork.ContactRepository.Get(u => u.Id == id); // tornar async
-            if (contactDTO != null)
-            {
-                _unitOfWork.ContactRepository.DeleteAsync(contactDTO);
-            }
-
-            await _unitOfWork.CommitAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
-        private bool ContactDTOExists(Guid id)
-        {
             var contact = _unitOfWork.ContactRepository.Get(c => c.Id == id);
 
             if (contact is null)
             {
-                return false;
+                ModelState.AddModelError("", "The contact doesn't exist.");
+                return View();
             }
-            return true;
+
+            return View(contact);
+        }
+
+        // GET: Dashboard/Delete/5
+        [HttpGet]
+        public async Task<IActionResult> Delete(Guid? id)
+        {
+            if (id == null)
+            {
+                ModelState.AddModelError("", "Contact ID must be informed.");
+                return View();
+            }
+
+            var contact = _unitOfWork.ContactRepository.Get(c => c.Id == id);
+
+            if (contact is null)
+            {
+                ModelState.AddModelError("", "The contact doesn't exist.");
+                return View();
+            }
+
+            return View(contact);
+        }
+
+        // POST: Dashboard/Delete/5
+        [HttpPost, ActionName("Delete")]
+        public async Task<IActionResult> DeleteConfirmed(Guid id)
+        {
+            var contact = _unitOfWork.ContactRepository.Get(c => c.Id == id); // tornar async
+
+            if (contact is null)
+            {
+                ModelState.AddModelError("", "The contact doesn't exist.");
+                return View();
+            }
+
+            _unitOfWork.ContactRepository.DeleteAsync(contact);
+            await _unitOfWork.CommitAsync();
+
+            return RedirectToAction(nameof(Index));
         }
 
         [HttpPost]
@@ -136,7 +137,7 @@ namespace FormContato.Controllers
 
                 if (bitlink != Environment.GetEnvironmentVariable("BITLY_FAIL_RESPONSE"))
                 {
-                    recipientObject.ShortUrl = bitlink;               
+                    recipientObject.ShortUrl = bitlink;
                 }
 
                 _unitOfWork.RecipientRepository.Create(recipientObject);
