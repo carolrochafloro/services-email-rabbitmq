@@ -111,8 +111,10 @@ namespace FormContato.Controllers
         [HttpPost]
         public async Task<IActionResult> UrlEmail(string email)
         {
+            var shortenUrl = new ShortenURL();
             string? baseUrl = Environment.GetEnvironmentVariable("BASE_URL");
             string url;
+            string bitlink;
 
             var recipient = _unitOfWork.RecipientRepository.Get(r => r.RecipientEmail == email);
             var user = User.FindFirst(ClaimTypes.NameIdentifier);
@@ -122,28 +124,35 @@ namespace FormContato.Controllers
             {
                 var encrypter = new EncryptedRecipientEmail();
                 var result = await encrypter.Encrypt(email, userId.ToString());
+                url = $"https://{baseUrl}/SendMessage/Index/{result.EncryptedEmail}";
+                bitlink = await shortenUrl.GetShortUrl(url);
+
                 var recipientObject = new RecipientModel
                 {
                     RecipientEmail = email,
-                    Url = result.EncryptedEmail,
+                    Url = url,
+                    ShortUrl = bitlink,
                     UserId = userId,
                 };
+
+                if (bitlink == Environment.GetEnvironmentVariable("BITLY_FAIL_RESPONSE"))
+                {
+                    recipientObject.ShortUrl = null;               
+                }
 
                 _unitOfWork.RecipientRepository.Create(recipientObject);
                 await _unitOfWork.CommitAsync();
 
-                url = $"https://{baseUrl}/SendMessage/Index/{result.EncryptedEmail}";
+                ViewBag.Url = bitlink != Environment.GetEnvironmentVariable("BITLY_FAIL_RESPONSE") ? bitlink : url;
 
-                ViewBag.Url = url;
-
-                return Content(url);
+                return Content(bitlink != Environment.GetEnvironmentVariable("BITLY_FAIL_RESPONSE") ? bitlink : url);
             }
 
-            url = $"https://{baseUrl}/SendMessage/Index/{recipient.Url}";
+            bitlink = recipient.ShortUrl;
 
-            ViewBag.Url = url;
+            ViewBag.Url = bitlink != null ? bitlink : recipient.Url;
 
-            return Content(url);
+            return Content(bitlink != null ? bitlink : recipient.Url);
 
         }
 
