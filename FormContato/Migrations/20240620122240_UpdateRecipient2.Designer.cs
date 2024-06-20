@@ -4,6 +4,7 @@ using FormContato.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FormContato.Migrations
 {
     [DbContext(typeof(FCDbContext))]
-    partial class FCDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240620122240_UpdateRecipient2")]
+    partial class UpdateRecipient2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -42,9 +45,6 @@ namespace FormContato.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("SentTimestamp")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("SentTo")
                         .IsRequired()

@@ -15,10 +15,12 @@ public class RecipientModel
 
     [Required]
     public string RecipientEmail { get; set; }
+
     [Required]
     public string Url { get; set;}
-    [Required]
+    public string ShortUrl { get; set;}
 
+    [Required]
     [ForeignKey(nameof(UserModel.Id))]
     public Guid UserId { get; set; }
 
