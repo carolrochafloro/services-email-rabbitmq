@@ -16,29 +16,28 @@ public class UpdateDB
 
     public async Task UpdateIsSent(bool response, Guid id)
     {
-        await Task.Delay(TimeSpan.FromSeconds(5));
-
-        var contact = await _context.Set<ContactModel>().FindAsync(id);
-
-        if (contact is null)
-        {
-            throw new Exception("----- Error: contact not found. -----");
-        }
-
-        if (response)
-        {
-            contact.IsSent = true;
-        }
-        else
-        {
-            contact.IsSent = false;
-        }
-
-        _context.Update(contact);
+ 
+        
 
         try
         {
+            var contact = await _context.Set<ContactModel>().FindAsync(id);
 
+            if (contact is null)
+            {
+                throw new Exception("----- Error: contact not found. -----");
+            }
+
+            if (response)
+            {
+                contact.IsSent = true;
+            }
+            else
+            {
+                contact.IsSent = false;
+            }
+
+            _context.Update(contact);
             await _context.SaveChangesAsync();
             _logger.LogInformation($"Contact Id {contact.Id} updated.");
 
