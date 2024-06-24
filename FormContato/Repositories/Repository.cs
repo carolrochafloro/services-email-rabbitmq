@@ -20,9 +20,9 @@ public class Repository<T> : IRepository<T> where T : class
 
     }
 
-    public T? Get(Expression<Func<T, bool>> predicate)
+    public async Task<T?> Get(Expression<Func<T, bool>> predicate)
     {
-        return _dbContext.Set<T>().FirstOrDefault(predicate);
+        return await _dbContext.Set<T>().FirstOrDefaultAsync(predicate);
     }
 
     public async Task<IEnumerable<T>> GetAllAsync()
