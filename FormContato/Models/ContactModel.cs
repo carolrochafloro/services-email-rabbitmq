@@ -19,7 +19,7 @@ public class ContactModel
     public string? Message { get; set; }
 
     public bool? IsSent { get; set; } = false;
-    public DateTime? SentTimestamp { get; private set; } = DateTime.UtcNow;
+    public DateTime SentTimestamp { get; set; }/* = DateTime.UtcNow;*/
 
     [ForeignKey(nameof(UserModel.Id))]
     public Guid UserId { get; set; }

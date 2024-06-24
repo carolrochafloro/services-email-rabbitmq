@@ -31,13 +31,13 @@
     <thead>
         <tr>
             <th>
+                @Html.DisplayNameFor(model => model.SentTimestamp)
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.Name)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Email)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Message)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.SentTo)
@@ -53,13 +53,13 @@
         {
             <tr>
                 <td>
+                    @Html.DisplayFor(modelItem => item.SentTimestamp)
+                </td>
+                <td>
                     @Html.DisplayFor(modelItem => item.Name)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Email)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Message)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.SentTo)
@@ -94,4 +94,5 @@
             link.textContent = url;
         });
     });
+
 </script>

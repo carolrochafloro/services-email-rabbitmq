@@ -39,9 +39,8 @@ public class SendMessageController : Controller
 
         var newContact = _mapper.Map<ContactModel>(contact);
 
-        newContact.SentTo = encryptedEmail;
         string baseUrl = $"https://{Environment.GetEnvironmentVariable("BASE_URL")}/SendMessage/Index/{encryptedEmail}";
-        var userId = _unitOfWork.RecipientRepository.Get(r => r.Url == baseUrl);
+        var userId = await _unitOfWork.RecipientRepository.Get(r => r.Url == baseUrl);
 
         if (userId is null)
         {
@@ -50,10 +49,12 @@ public class SendMessageController : Controller
         }
 
         newContact.UserId = userId.UserId;
+        newContact.SentTimestamp = DateTime.UtcNow;
+        newContact.SentTo = userId.RecipientEmail;
 
         try
         {
-            var recipient = _unitOfWork.RecipientRepository.Get(r => r.Url == baseUrl);
+            var recipient = await _unitOfWork.RecipientRepository.Get(r => r.Url == baseUrl);
 
             if (recipient is null)
             {

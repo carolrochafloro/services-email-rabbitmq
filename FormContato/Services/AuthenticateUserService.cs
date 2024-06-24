@@ -24,7 +24,7 @@ public class AuthenticateUserService
 
         try
         {
-            var user = _unitOfWork.UserRepository.Get(u => u.Email == login.Email);
+            var user = await _unitOfWork.UserRepository.Get(u => u.Email == login.Email);
 
             if (user is null)
             {

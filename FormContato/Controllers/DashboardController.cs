@@ -21,11 +21,8 @@ namespace FormContato.Controllers
             _mapper = mapper;
         }
 
-        // GET: Dashboard
-
         public async Task<IActionResult> Index()
         {
-            // pegar id do user do cookie, mostrar mensagens com userId == id
 
             var userId = User.FindFirst(ClaimTypes.NameIdentifier);
 
@@ -44,10 +41,9 @@ namespace FormContato.Controllers
             }
 
             var contactDTOs = _mapper.Map<IEnumerable<ContactDTO>>(contacts);
+
             return View(contactDTOs);
         }
-
-        // GET: Dashboard/Details/5
 
         public async Task<IActionResult> Details(Guid? id)
         {
@@ -59,7 +55,7 @@ namespace FormContato.Controllers
                 return View();
             }
 
-            var contact = _unitOfWork.ContactRepository.Get(c => c.Id == id);
+            var contact = await _unitOfWork.ContactRepository.Get(c => c.Id == id);
 
             if (contact is null)
             {
@@ -80,7 +76,7 @@ namespace FormContato.Controllers
                 return View();
             }
 
-            var contact = _unitOfWork.ContactRepository.Get(c => c.Id == id);
+            var contact = await _unitOfWork.ContactRepository.Get(c => c.Id == id);
 
             if (contact is null)
             {
@@ -95,7 +91,7 @@ namespace FormContato.Controllers
         [HttpPost, ActionName("Delete")]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var contact = _unitOfWork.ContactRepository.Get(c => c.Id == id); // tornar async
+            var contact = await _unitOfWork.ContactRepository.Get(c => c.Id == id); // tornar async
 
             if (contact is null)
             {
@@ -117,7 +113,7 @@ namespace FormContato.Controllers
             string url;
             string bitlink;
 
-            var recipient = _unitOfWork.RecipientRepository.Get(r => r.RecipientEmail == email);
+            var recipient = await _unitOfWork.RecipientRepository.Get(r => r.RecipientEmail == email);
             var user = User.FindFirst(ClaimTypes.NameIdentifier);
             var userId = Guid.Parse(user.Value);
 

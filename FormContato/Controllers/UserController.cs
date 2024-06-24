@@ -129,7 +129,7 @@ namespace FormContato.Controllers
                 return NotFound();
             }
 
-            var userModel = _unitOfWork.UserRepository.Get(m => m.Id == id);
+            var userModel = await _unitOfWork.UserRepository.Get(m => m.Id == id);
             if (userModel == null)
             {
                 return NotFound();
@@ -143,7 +143,7 @@ namespace FormContato.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var userModel = _unitOfWork.UserRepository.Get(u => u.Id == id);
+            var userModel = await _unitOfWork.UserRepository.Get(u => u.Id == id);
             if (userModel != null)
             {
                 _unitOfWork.UserRepository.DeleteAsync(userModel);
