@@ -12,91 +12,43 @@ public class AuthenticateUserService
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly PasswordHasher _passwordHasher;
+    private readonly AuthenticationService _authService;
 
-    public AuthenticateUserService(IUnitOfWork unitOfWork, PasswordHasher passwordHasher)
+    public AuthenticateUserService(IUnitOfWork unitOfWork, PasswordHasher passwordHasher, AuthenticationService authService)
     {
         _unitOfWork = unitOfWork;
         _passwordHasher = passwordHasher;
         DotEnv.Load();
+        _authService = authService;
     }
     public async Task<Result> Authenticate(LoginDTO login)
     {
+        var user = await FetchUser(login.Email);
 
-        try
+        if (user is null)
         {
-            var user = await _unitOfWork.UserRepository.Get(u => u.Email == login.Email);
-
-            if (user is null)
-            {
-                return new Result
-                {
-                    Success = false,
-                    Error = "Invalid login attempt."
-                };
-
-            }
-
-            bool isValidPassword = _passwordHasher.IsValidPassword(login.Password, user.Salt, user.Password);
-
-            if (!isValidPassword)
-            {
-                return new Result
-                {
-                    Success = false,
-                    Error = "Login or password are invalid."
-                };
-            }
-
-            if (user.IsActive == false)
-            {
-                return new Result
-                {
-                    Success = false,
-                    Error = "Invalid login attempt."
-                };
-            }
-            return new Result
-            {
-                Success = true,
-                User = user
-            };
-        }
-        catch (Exception ex)
-        {
-            return new Result
-            {
-                Success = false,
-                Error = ex.Message
-            };
+            return UserNotFoundError();
         }
 
+        if (!IsValidPassword(login.Password, user))
+        {
+            return InvalidPasswordError();
+        }
+
+        if (!user.IsActive)
+        {
+            return UserNotActiveError();
+        }
+
+        return SuccessfulResult(user);
     }
 
     public async Task<Result> GenerateCookies(UserModel user, HttpContext httpContext)
     {
         try
         {
-
-            string userId = user.Id.ToString();
-            var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Name, user.Name),
-                new Claim(ClaimTypes.Surname, user.LastName),
-                new Claim(ClaimTypes.NameIdentifier, userId)
-                // incluir role
-            };
-
-            var claimsIdentity = new ClaimsIdentity(
-            claims, CookieAuthenticationDefaults.AuthenticationScheme);
-
-            var authProperties = new AuthenticationProperties
-            {
-                AllowRefresh = true,
-                ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(30),
-                IsPersistent = true,
-                //RedirectUri = $"{Environment.GetEnvironmentVariable("BASE_URL")}/Dashboard/Index"
-            };
+            var claimsIdentity = _authService.CreateClaimsIdentity(user);
+            var authProperties = _authService.CreateAuthProperties();
 
             await httpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
 
@@ -104,7 +56,6 @@ public class AuthenticateUserService
             {
                 Success = true,
             };
-
         }
         catch (Exception ex)
         {
@@ -114,7 +65,55 @@ public class AuthenticateUserService
                 Error = ex.Message
             };
         }
-
     }
 
+    public async Task<UserModel> FetchUser (string email)
+    {
+        return await _unitOfWork.UserRepository.Get(u => u.Email == email);
+    }
+
+    private bool IsValidPassword(string password, UserModel user)
+    {
+        return _passwordHasher.IsValidPassword(password, user.Salt, user.Password);
+    }
+
+    private Result UserNotFoundError()
+    {
+        return new Result
+        {
+            Success = false,
+            Error = "Invalid login attempt."
+        };
+    }
+
+    private Result InvalidPasswordError()
+    {
+        return new Result
+        {
+            Success = false,
+            Error = "Login or password are invalid."
+        };
+    }
+
+    private Result UserNotActiveError()
+    {
+        return new Result
+        {
+            Success = false,
+            Error = "Invalid login attempt."
+        };
+    }
+
+    private Result SuccessfulResult(UserModel user)
+    {
+        return new Result
+        {
+            Success = true,
+            User = user
+        };
+    }
+
+    
 }
+
+
