@@ -20,5 +20,6 @@ Já no desenvolvimento do projeto FormContact consegui executar melhor a separa�
 - Testes;
 - Docker-compose: SQL Server, RabbitMQ, projeto Email e projeto FormContato;
 - Paginação de resultados;
-- Criar service para consumir API do Bitly.
+- Melhorar tratamento de erros;
+- Implementar logging no DB.
 
