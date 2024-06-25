@@ -68,3 +68,12 @@ body {
     #logout:hover {
         box-shadow: #cdcccc 1px 1px 1px 1px;
     }
+
+.form-group {
+    max-width: max-content;
+}
+.delete {
+    text-decoration: none;
+    color: #ff0000;
+    font-size: 0.75rem;
+}

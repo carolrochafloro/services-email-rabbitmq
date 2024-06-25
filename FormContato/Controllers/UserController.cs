@@ -2,6 +2,9 @@
 using FormContato.DTOs;
 using FormContato.Models;
 using FormContato.Repositories;
+using FormContato.Services;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -31,7 +34,7 @@ namespace FormContato.Controllers
                 return Forbid();
             }
 
-            var user = _unitOfWork.UserRepository.Get(u => u.Email == userEmail);
+            var user = await _unitOfWork.UserRepository.Get(u => u.Email == userEmail);
 
             if (user is null)
             {
@@ -39,32 +42,8 @@ namespace FormContato.Controllers
             }
 
             var mappedUser = _mapper.Map<ProfileDTO>(user);
-
+            ViewBag.User = mappedUser;
             return View(mappedUser);
-        }
-
-        //GET: User/Details/5
-        public async Task<IActionResult> Details(Guid? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var userModel = _unitOfWork.UserRepository.Get(m => m.Id == id);
-
-            if (userModel == null)
-            {
-                return NotFound();
-            }
-
-            return View(userModel);
-        }
-
-        // GET: User/Create
-        public IActionResult Create()
-        {
-            return View();
         }
 
 
@@ -86,80 +65,82 @@ namespace FormContato.Controllers
             return View(userModel);
         }
 
-        // POST: User/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name,LastName,Email,Password,Salt,IsActive,CreatedAt,LastUpdatedAt,LastUpdatedBy,Role")] UserModel userModel)
+        public async Task<IActionResult> Edit([FromForm] ProfileDTO newUser)
         {
-            if (id != userModel.Id)
+            string stringId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            Guid id = Guid.Parse(stringId);
+
+            var user = await _unitOfWork.UserRepository.Get(u => u.Id == id);
+            var hasher = new PasswordHasher();
+
+            if (user is null)
             {
-                return NotFound();
+                return View("Error");
             }
 
-            if (ModelState.IsValid)
+            user.Email = newUser.Email;
+            user.Name = newUser.Name;
+            user.LastName = newUser.LastName;
+
+            if (!hasher.IsValidPassword(newUser.Password, user.Salt, user.Password))
             {
-                try
-                {
-                    _unitOfWork.UserRepository.UpdateAsync(userModel);
-                    await _unitOfWork.CommitAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!UserModelExists(userModel.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                hasher.HashPassword(newUser.Password);
+
+                user.Password = hasher.Password;
+                user.Salt = hasher.Salt;
+            }
+                    
+            user.LastUpdatedBy = id.ToString();
+            user.LastUpdatedAt = DateTime.UtcNow;
+
+            try
+            {
+                _unitOfWork.UserRepository.UpdateAsync(user);
+                await _unitOfWork.CommitAsync();
+                TempData["SuccessMessage"] = "Your profile was updated.";
                 return RedirectToAction(nameof(Index));
             }
-            return View(userModel);
+            catch (Exception ex)
+            {
+                ViewBag.ErrorMessage = ex;
+                return View("Error");
+            }
+            
         }
 
-        // GET: User/Delete/5
-        public async Task<IActionResult> Delete(Guid? id)
+        public async Task<IActionResult> DeleteUser()
         {
-            if (id == null)
+
+            try
             {
-                return NotFound();
+                string stringId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                Guid id = Guid.Parse(stringId);
+                var userModel = await _unitOfWork.UserRepository.Get(u => u.Id == id);
+
+                if (userModel is null || userModel.IsActive == false)
+                {
+                    ViewBag.ErrorMessage = "User not found";
+                }
+
+                userModel.IsActive = false;
+                userModel.LastUpdatedAt = DateTime.UtcNow;
+                userModel.LastUpdatedBy = userModel.Id.ToString();
+                _unitOfWork.UserRepository.UpdateAsync(userModel);
+
+                await _unitOfWork.CommitAsync();
+
+                await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+                return RedirectToAction("Index", "Home");
+
+            }
+            catch (Exception ex)
+            {
+                ViewBag.ErrorMessage = ex.Message;
+                return View("Error");
             }
 
-            var userModel = await _unitOfWork.UserRepository.Get(m => m.Id == id);
-            if (userModel == null)
-            {
-                return NotFound();
-            }
-
-            return View(userModel);
         }
 
-        // POST: User/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(Guid id)
-        {
-            var userModel = await _unitOfWork.UserRepository.Get(u => u.Id == id);
-            if (userModel != null)
-            {
-                _unitOfWork.UserRepository.DeleteAsync(userModel);
-            }
-
-            await _unitOfWork.CommitAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
-        private bool UserModelExists(Guid id)
-        {
-            var user = _unitOfWork.UserRepository.Get(e => e.Id == id);
-
-            if (user is null) { return false; }
-
-            return true;
-        }
     }
 }
