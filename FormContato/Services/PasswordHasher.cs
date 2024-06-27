@@ -3,11 +3,9 @@ using System.Text;
 
 namespace FormContato.Services;
 
-public class PasswordHasher
+public class PasswordHasher : IPasswordHasher
 {
-    // gerar um salt aleatório e passar como chave para HMACSHA25. usar computehash para gerar o hash da senha
-    // após ter passado o salt como chave. converter arrays de bytes hash e salt para string e retornar os dois.
-
+   
     public string Password { get; set; }
     public string Salt { get; set; }
     public void HashPassword(string password)

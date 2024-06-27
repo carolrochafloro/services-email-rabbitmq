@@ -26,7 +26,6 @@ public class LoginController : Controller
         return View("Login");
     }
 
-
     [HttpPost]
     public async Task<IActionResult> Login(LoginDTO login)
     {
