@@ -3,18 +3,22 @@ using FormContato.DTOs;
 using FormContato.Models;
 using FormContato.Repositories;
 using FormContato.Services;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
+using NuGet.Protocol.Plugins;
+using System.Security.Claims;
 
 namespace FormContato.Controllers;
 public class RegisterController : Controller
 {
     private readonly IMapper _mapper;
     private readonly IUnitOfWork _unitOfWork;
-    private readonly PasswordHasher _hasher;
+    private readonly IPasswordHasher _hasher;
     private readonly AuthenticateUserService _authService;
 
-    public RegisterController(IMapper mapper, IUnitOfWork unitOfWork, PasswordHasher hasher, AuthenticateUserService authService)
+    public RegisterController(IMapper mapper, IUnitOfWork unitOfWork, IPasswordHasher hasher, AuthenticateUserService authService)
     {
         _mapper = mapper;
         _unitOfWork = unitOfWork;
@@ -57,22 +61,15 @@ public class RegisterController : Controller
                 Email = user.Email,
                 Password = user.Password,
             };
+            // prepare for auth
+            // httpcontext p/ login
 
-            var result = await _authService.Authenticate(newUserLogin);
+            var properties = await _authService.PrepareForAuthentication(newUserLogin);
 
-            if (result.Success == false || result.User == null)
-            {
-                ModelState.AddModelError(string.Empty, "Failed attempt to login.");
-                return View("Login", newUserLogin);
-            }
+            var claimsPrincipal = new ClaimsPrincipal(properties.Item1);
 
-            var cookieResult = await _authService.GenerateCookies(result.User, HttpContext);
-
-            if (cookieResult.Success == false)
-            {
-                ModelState.AddModelError(string.Empty, "Failed attempt to login.");
-                return View("Login", newUserLogin);
-            }
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
+                                          claimsPrincipal, properties.Item2);
 
             return RedirectToAction("Index", "Dashboard"); // redirecionar para página inicial de usuário logado
         }

@@ -11,10 +11,10 @@ namespace FormContato.Services;
 public class AuthenticateUserService
 {
     private readonly IUnitOfWork _unitOfWork;
-    private readonly PasswordHasher _passwordHasher;
+    private readonly IPasswordHasher _passwordHasher;
     private readonly AuthenticationService _authService;
 
-    public AuthenticateUserService(IUnitOfWork unitOfWork, PasswordHasher passwordHasher, AuthenticationService authService)
+    public AuthenticateUserService(IUnitOfWork unitOfWork, IPasswordHasher passwordHasher, AuthenticationService authService)
     {
         _unitOfWork = unitOfWork;
         _passwordHasher = passwordHasher;
@@ -23,7 +23,8 @@ public class AuthenticateUserService
     }
     public async Task<Result> Authenticate(LoginDTO login)
     {
-        var user = await FetchUser(login.Email);
+        // incluir verificação do model
+        UserModel user = await FetchUser(login.Email);
 
         if (user is null)
         {
@@ -43,31 +44,22 @@ public class AuthenticateUserService
         return SuccessfulResult(user);
     }
 
-    public async Task<Result> GenerateCookies(UserModel user, HttpContext httpContext)
+    public async Task<(ClaimsIdentity, AuthenticationProperties)> PrepareForAuthentication(LoginDTO login)
     {
-        try
+        UserModel user = await FetchUser(login.Email);
+
+        if (user is not null)
         {
             var claimsIdentity = _authService.CreateClaimsIdentity(user);
             var authProperties = _authService.CreateAuthProperties();
 
-            await httpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
+            return (claimsIdentity, authProperties);
+        }
 
-            return new Result
-            {
-                Success = true,
-            };
-        }
-        catch (Exception ex)
-        {
-            return new Result
-            {
-                Success = false,
-                Error = ex.Message
-            };
-        }
+        return (null, null);  
     }
 
-    public async Task<UserModel> FetchUser (string email)
+    public async Task<UserModel> FetchUser(string email)
     {
         return await _unitOfWork.UserRepository.Get(u => u.Email == email);
     }
@@ -113,7 +105,6 @@ public class AuthenticateUserService
         };
     }
 
-    
 }
 
 

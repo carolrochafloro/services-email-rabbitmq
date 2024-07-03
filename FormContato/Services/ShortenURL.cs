@@ -5,7 +5,6 @@ using System.Text;
 
 namespace FormContato.Services;
 
-// testar em prod (coragem)
 public class ShortenURL
 {
 
@@ -44,7 +43,7 @@ public class ShortenURL
 
             }
 
-            return Environment.GetEnvironmentVariable("BITLY_FAIL_RESPONSE");
+            return null;
 
         }
         catch (Exception ex)

@@ -4,16 +4,15 @@ namespace FormContato.Services;
 
 public class EncryptedRecipientEmail
 {
-    public string EncryptedEmail { get; set; }
-    public string DecryptKey { get; set; }
-    public string DecryptIV { get; set; }
+    public string? EncryptedEmail { get; set; }
+    public string? DecryptKey { get; set; }
+    public string? DecryptIV { get; set; }
 
     public async Task<EncryptedRecipientEmail> Encrypt(string email, string userId)
     {
 
         byte[] encrypted;
 
-        // string to bytes + encrypt
         using (Aes aes = Aes.Create())
         {
             aes.GenerateKey();
@@ -50,17 +49,5 @@ public class EncryptedRecipientEmail
         }
 
     }
-
-    /* decrypt:
-    public static byte[] FromBase64UrlString(string input)
-    {
-        input = input.Replace('-', '+').Replace('_', '/');
-
-        while (input.Length % 4 != 0)
-        {
-            input += '=';
-        }
-
-        return Convert.FromBase64String(input);
-    }*/
 }
+

@@ -3,11 +3,12 @@ using FormContato.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
+using System.Security.Claims;
 
 namespace FormContato.Controllers;
 public class LoginController : Controller
 
-// criar service para gerar JWT e refresh token e gerenciar sessão, criar model p/ sessão.
 {
     private readonly AuthenticateUserService _authService;
 
@@ -32,21 +33,13 @@ public class LoginController : Controller
 
         try
         {
-            var result = await _authService.Authenticate(login);
 
-            if (result.Success == false || result.User == null)
-            {
-                ModelState.AddModelError(string.Empty, "Failed attempt to login.");
-                return View("Login", login);
-            }
+            var properties = await _authService.PrepareForAuthentication(login);
 
-            var cookieResult = await _authService.GenerateCookies(result.User, HttpContext);
+            var claimsPrincipal = new ClaimsPrincipal(properties.Item1);
 
-            if (cookieResult.Success == false)
-            {
-                ModelState.AddModelError(string.Empty, "Failed attempt to login.");
-                return View("Login", login);
-            }
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
+                                          claimsPrincipal, properties.Item2);
 
             return RedirectToAction("Index", "Dashboard");
         }
@@ -60,9 +53,7 @@ public class LoginController : Controller
 
     public async Task<IActionResult> Logout()
     {
-
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         return RedirectToAction("Index", "Home");
-
     }
 }

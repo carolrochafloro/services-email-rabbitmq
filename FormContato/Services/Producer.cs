@@ -14,8 +14,6 @@ public class Producer : IDisposable
     protected ConnectionFactory factory;
     protected IConnection connection;
     protected IModel channel;
-
-    // conexão com o servidor no construtor
     public Producer()
     {
         DotEnv.Load();

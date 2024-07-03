@@ -131,7 +131,7 @@ namespace FormContato.Controllers
                     UserId = userId,
                 };
 
-                if (bitlink != Environment.GetEnvironmentVariable("BITLY_FAIL_RESPONSE"))
+                if (bitlink is not null)
                 {
                     recipientObject.ShortUrl = bitlink;
                 }
@@ -139,9 +139,9 @@ namespace FormContato.Controllers
                 _unitOfWork.RecipientRepository.Create(recipientObject);
                 await _unitOfWork.CommitAsync();
 
-                ViewBag.Url = bitlink != Environment.GetEnvironmentVariable("BITLY_FAIL_RESPONSE") ? bitlink : url;
+                ViewBag.Url = bitlink != null ? bitlink : url;
 
-                return Content(bitlink != Environment.GetEnvironmentVariable("BITLY_FAIL_RESPONSE") ? bitlink : url);
+                return Content(bitlink != null ? bitlink : url);
             }
 
             bitlink = recipient.ShortUrl;
