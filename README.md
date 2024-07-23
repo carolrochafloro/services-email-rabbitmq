@@ -1,5 +1,7 @@
 # Serviços - envio de e-mail com worker e RabbitMQ
-Projeto de serviços para receber contatos em uma aplicação MVC, salvar no SQL Server, publicar mensagem no RabbitMQ e um worker consumindo mensagens do RabbitMQ e enviando e-mail através do Sendgrid.
+Projeto de serviços para receber contatos em uma aplicação MVC, salvar no SQL Server, publicar mensagem no RabbitMQ e um worker consumindo mensagens do RabbitMQ e enviando e-mail através do Sendgrid.  
+
+Desenvolvido utilizando .NET 8, SQL Server e RabbitMQ, utilizando o padrão repository.
 
 ## Funcionalidades
 Gere uma página de contato personalizada e receba as mensagens direto no seu e-mail. Acompanhe as mensagens enviadas através do dashboard.
@@ -11,11 +13,3 @@ Já no desenvolvimento do projeto FormContact consegui executar melhor a separa�
 
 ## Worker
 ![image](https://github.com/carolrochafloro/microservices-email-rabbitmq/assets/127871333/6e89de4a-5b3d-47c4-bcea-e7118c62ab0d)
-
-## Backlog
-- Testes;
-- Docker-compose: SQL Server, RabbitMQ, projeto Email e projeto FormContato;
-- Paginação de resultados;
-- Melhorar tratamento de erros;
-- Implementar logging no DB.
-
